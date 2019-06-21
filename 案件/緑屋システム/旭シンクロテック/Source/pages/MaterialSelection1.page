@@ -1,0 +1,135 @@
+<apex:page title="資材選択①" controller="MaterialController" standardStylesheets="false" showHeader="false">
+<head>
+    <c:MaterialHtmlHead />
+</head>
+<body>
+    <apex:form id="form">
+        <apex:actionFunction name="transition1Next" action="{!transition1Next}"/><!--資材選択1から2へ-->
+        <apex:actionFunction name="transitionToList1" action="{!transitionToList1}"/><!--資材一覧1へ-->
+
+        <div id="div" class="container mainbox">
+            <div class="well well-sm" style="text-align:center;margin-top:10px">資材選択</div>
+            <apex:outputPanel rendered="{!errorMes!=''}" layout="none" id="error">
+                <div class="alert alert-danger"><strong>error</strong> : {!errorMes}</div><!--エラー表示エリア(仮)-->
+            </apex:outputPanel>
+            工事番号：
+            <apex:inputText id="searchVal" value="{!ConstructionNumber}" style="background-color:#ebebe4;border:1px solid #ccc;" />
+            <div class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search"><span class="glyphicon glyphicon-search" aria-hidden="true" /></div><br/>
+            <label id="search-name" style="font-weight:400">{!ConstructionName}</label>
+            <label id="search-type" style="display:none">{!ConstructionRecordTypeId}</label>
+            <apex:inputText id="searchNameVal" value="{!ConstructionName}" style="display:none" /><!--工事名保持用-->
+            <apex:inputText id="searchTypeVal" value="{!ConstructionRecordTypeId}" style="display:none" /><!--レコードタイプ保持用-->
+
+            <apex:inputText id="division" value="{!division}" style="display:none" /><!--B材送信用のhidden項目-->
+            <br/>
+            <div style="text-align:center">
+                <apex:commandLink onclick="return CheckInputData('{!divisionSmall}', 'Selection2')" styleClass="btn btn-primary btn-block mainbox link" value="{!divisionSmall}" style="margin-top:10px;margin-bottom: 5px;border-color: #11b0e5" />
+                <apex:commandLink onclick="return CheckInputData('{!divisionSmall}', 'List1')" value="注文入力中(B材(小口))"/>
+            </div>
+            <br/>
+            <div style="text-align:center">
+                <apex:commandLink onclick="return CheckInputData('{!divisionBig}', 'Selection2')" styleClass="btn btn-primary btn-block mainbox link" value="{!divisionBig}" style="margin-bottom: 5px;background-color: #11b0e5" />
+                <apex:commandLink onclick="return CheckInputData('{!divisionBig}', 'List1')" value="注文入力中(B材(大口))"/>
+            </div>
+            <!-- <div class="btn btn-primary mainbox back" style="margin-top: 40px;display: none">戻る</div> -->
+        </div>
+    </apex:form>
+    <!--モーダル/検索・工事番号-->
+    <div class="modal fade" id="search" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align:center">
+                    <!--modal body-->
+                    工事番号選択<br/>
+                    <table class="table table-bordered" style="text-align:left">
+                        <tr>
+                            <th style="width:50%" class="val"><label>工事番号</label></th>
+                        </tr>
+                        <apex:repeat value="{!ConstructionDisplay}" var="construct">
+                            <tr class="btn-default tgt">
+                                <td class="val"><label style="color:#337ab7">{!construct['value']}</label></td>
+                                <td class="name" hidden="true"><label style="color:#337ab7">{!construct['label']}</label></td>
+                                <td class="record_type" hidden="true"><label style="color:#337ab7">{!construct['record_type']}</label></td>
+                            </tr>
+                        </apex:repeat>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div><!--モーダル/検索・工事番号　ここまで-->
+</body>
+<script>
+$(document).ready(function () {
+    //戻るボタンをモバイル端末以外で非表示にする
+    if(isMobile()){
+        $('div.back').show();
+    }
+
+    //input欄をJSで入力不可にする
+    var id_r = '{!$Component.form.searchVal}'; //VFページでのセレクタ取得
+    id_r = id_r.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+    $('#'+ id_r).attr('readonly',true);
+
+    //モーダル選択時の挙動
+    $('tr.tgt').click(function(){
+        //クリック行の値取得
+        var val = $(this).find('td.val').children('label').text();
+        var name = $(this).find('td.name').children('label').text();
+        var record_type = $(this).find('td.record_type').children('label').text();
+        //取得値の反映
+        var id = '{!$Component.form.searchVal}'; //VFページでのセレクタ取得
+        id = id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+        $('#'+ id).val(val);
+        $('#search-name').text("工事名　： " + name);
+        $('#search-type').text(record_type);
+        var name_id = '{!$Component.form.searchNameVal}'; //VFページでのセレクタ取得
+        name_id = name_id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+        $('#' + name_id).val("工事名　： " + name);
+        var type_id = '{!$Component.form.searchTypeVal}'; //VFページでのセレクタ取得
+        type_id = type_id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+        $('#' + type_id).val(record_type);
+        //モーダル削除
+        $('#search').modal('hide');
+    });
+});
+
+//バリデーション
+//資材選択1画面
+function CheckInputData(material, address) {
+    changeLoading(true);
+    var id = '{!$Component.form.searchVal}'; //VFページでのセレクタ取得
+    id = id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+    var tgt = $('#'+ id).val();
+
+    var type = $('#search-type').text();
+
+    {!$RemoteAction.MaterialController.CheckSelection1}(
+        tgt,type,material,  // 渡すパラメータ 
+        function(result, event){    // コールバック関数
+            if(event.status) {
+                if (result == ""){
+                    //inputに値を入れる
+                    var divisionId = '{!$Component.form.division}'; //VFページでのセレクタ取得
+                    divisionId = divisionId.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+                    $('#' + divisionId).val(material);
+                    if(address == 'Selection2'){
+                        transition1Next();
+                    }else if(address == 'List1'){
+                        transitionToList1();
+                    }
+                }else{
+                    changeLoading(false);
+                    customAlert(result);
+                }
+            }
+            else{
+                changeLoading(false);
+                customAlert("システムエラー");
+            }
+        });
+
+        return false;
+}
+
+</script>
+</apex:page>

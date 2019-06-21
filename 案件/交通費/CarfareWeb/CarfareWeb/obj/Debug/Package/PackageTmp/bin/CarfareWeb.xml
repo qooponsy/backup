@@ -1,0 +1,159 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+CarfareWeb
+</name>
+</assembly>
+<members>
+<member name="T:CarfareWeb.M_Worker">
+ <summary>
+ M_Workerテーブル接続クラス
+ </summary>
+</member>
+<member name="M:CarfareWeb.M_Worker.GetWorker(System.String,CarfareWeb.M_Worker@)">
+ <summary>
+ セッションの交通費データの社員IDからデータを取得する
+ </summary>
+ <param name="workerID">交通費データから得た社員ID</param>
+ <param name="workerData">社員テーブルデータ格納用インスタンス</param>
+ <returns></returns>
+</member>
+<member name="T:CarfareWeb.T_Carfare">
+ <summary>
+ T_Carfareテーブル接続クラス
+ </summary>
+</member>
+<member name="M:CarfareWeb.T_Carfare.GetCarfare(System.String,CarfareWeb.T_Carfare@)">
+ <summary>
+ 交通費IDを使って交通費データを取ってくる
+ </summary>
+ <param name="carfareID">セッションから取得した交通費ID</param>
+ <param name="CarfareData">交通費テーブルデータ格納用インスタンス</param>
+ <returns>処理が全て成功したらTrue, どこかで失敗したらFalse</returns>
+</member>
+<member name="M:CarfareWeb.T_Carfare.UpdateCarfare(System.Int32,System.String)">
+ <summary>
+ 指定されたCarfareIDの交通費データのステータスを「記載済み」に変更する
+ </summary>
+ <param name="carfareID">ステータスを変更する交通費ID</param>
+ <returns>処理が全て成功したらTrue, どこかで失敗したらFalse</returns>
+</member>
+<member name="F:CarfareWeb.CarfareWeb._form1">
+<summary>
+form1 コントロール。
+</summary>
+<remarks>
+自動生成されたフィールド。
+変更するには、フィールドの宣言をデザイナー ファイルから分離コード ファイルに移動します。
+</remarks>
+</member>
+<member name="T:CarfareWeb.S_Session">
+ <summary>
+ S_Sessionテーブル接続クラス
+ </summary>
+</member>
+<member name="M:CarfareWeb.S_Session.GetSession(System.String,CarfareWeb.S_Session@)">
+ <summary>
+ セッションキーを使ってデータを持ってくる
+ </summary>
+ <param name="sessionKey">送られてきたセッションキー</param>
+ <param name="sessionData">セッションテーブルデータ格納用インスタンス</param>
+ <returns>データがあればTrue, なければFalse</returns>
+</member>
+<member name="M:CarfareWeb.S_Session.DeleteSession(System.Int32)">
+ <summary>
+ 処理に使ったセッションデータを削除する
+ </summary>
+ <param name="carfareID">記載ステータスを変更した交通費ID</param>
+ <returns>処理が最後まで終わったらTrue, どこかで失敗したらFalse</returns>
+</member>
+<member name="T:CarfareWeb.My.MyWebExtension">
+ <summary>
+ Web プロジェクトの My Namespace で使用できるプロパティを定義するためのモジュール。
+ </summary>
+ <remarks></remarks>
+</member>
+<member name="P:CarfareWeb.My.MyWebExtension.Computer">
+ <summary>
+ ホスト コンピューターに関する情報を返します。
+ </summary>
+</member>
+<member name="P:CarfareWeb.My.MyWebExtension.User">
+ <summary>
+ 現在の Web ユーザーに関する情報を返します。
+ </summary>
+</member>
+<member name="P:CarfareWeb.My.MyWebExtension.Request">
+ <summary>
+ Request オブジェクトを返します。
+ </summary>
+</member>
+<member name="P:CarfareWeb.My.MyWebExtension.Response">
+ <summary>
+ Response オブジェクトを返します。
+ </summary>
+</member>
+<member name="P:CarfareWeb.My.MyWebExtension.Log">
+ <summary>
+ Asp ログ オブジェクトを返します。
+ </summary>
+</member>
+<member name="T:CarfareWeb.My.Resources.Resources">
+<summary>
+  ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
+</summary>
+</member>
+<member name="P:CarfareWeb.My.Resources.Resources.ResourceManager">
+<summary>
+  このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
+</summary>
+</member>
+<member name="P:CarfareWeb.My.Resources.Resources.Culture">
+<summary>
+  厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+  現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
+</summary>
+</member>
+<member name="P:CarfareWeb.My.Resources.Resources.script">
+<summary>
+  
+BEGIN TRY
+BEGIN tran
+
+UPDATE [T_Carfare] SET [UpdTime] = SYSDATETIME(), [UpdUser] = @UpdUser, [Status] = 2 WHERE [carfareID] = @carfareID
+
+DELETE FROM [S_Session] WHERE [carfareID] = @carfareID
+
+COMMIT tran
+END TRY
+
+BEGIN CATCH
+
+    declare @ErrorMessage nvarchar(4000)
+    declare @ErrorSeverity int
+    declare @ErrorState int
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+	RAISERROR (@ErrorMessage, --  [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="F:CarfareWeb.Test._form1">
+<summary>
+form1 コントロール。
+</summary>
+<remarks>
+自動生成されたフィールド。
+変更するには、フィールドの宣言をデザイナー ファイルから分離コード ファイルに移動します。
+</remarks>
+</member>
+<member name="T:CarfareWeb.LogWrite">
+ <summary>
+ イベントログへの書き込み
+ </summary>
+</member>
+</members>
+</doc>

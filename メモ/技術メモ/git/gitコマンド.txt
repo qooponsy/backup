@@ -1,0 +1,5 @@
+
+ƒ[ƒJƒ‹ commit ˆê‚Â–ß‚µ
+	git reset --hard HEAD^ 
+
+

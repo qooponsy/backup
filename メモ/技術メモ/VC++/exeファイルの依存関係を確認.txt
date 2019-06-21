@@ -1,0 +1,6 @@
+
+URL
+	https://jp.xlsoft.com/documents/intel/cvf/vf-html/pg/pg26_10_02.htm
+
+ƒRƒ}ƒ“ƒh—á
+	dumpbin /DEPENDENTS C:\test\test.exe

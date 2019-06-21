@@ -1,0 +1,74 @@
+<apex:component >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <!-- <script src="{!URLFOR($Resource.jqueryNotmin)}" integrity="" crossorigin="use-credentials"></script> -->
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+
+    <script src="{!URLFOR($Resource.bootstrap3, 'bootstrap-3.3.7-dist/jquery-3.3.1.min.js')}" integrity="" crossorigin="use-credentials"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+    <script src="{!URLFOR($Resource.bootstrap3, 'bootstrap-3.3.7-dist/js/bootstrap.min.js')}" integrity="" crossorigin="use-credentials"></script>
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" integrity="" crossorigin="anonymous"></script> -->
+    <!-- <script src="{!URLFOR($Resource.moment)}" integrity="" crossorigin="anonymous"></script> -->
+    <!-- <script src="{!URLFOR($Resource.datetimepicker)}" integrity="" crossorigin="anonymous"></script> -->
+    <script src="{!URLFOR($Resource.datepicker, 'datepicker/bootstrap-datepicker.js')}" integrity="" crossorigin="use-credentials"></script>
+    <script src="{!URLFOR($Resource.datepicker, 'datepicker/bootstrap-datepicker.ja.js')}" integrity="" crossorigin="use-credentials"></script>
+    <apex:stylesheet value="{!URLFOR($Resource.bootstrap3, 'bootstrap-3.3.7-dist/css/bootstrap.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.datepicker, 'datepicker/bootstrap-datepicker.css')}"/>
+    <c:MaterialCustomCss />
+    <!--loadingパーツ-->
+    <div id="loading">
+        <div class="gif">
+            <img src="{!URLFOR($Resource.loadingGif100)}" />
+        </div>
+    </div>
+    <style>
+        #loading{
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            width: 100%;
+            height:100%;
+            display: none;
+            background: rgba(0,0,0,0.45);
+        }
+        div.gif{
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+    <script>
+        function changeLoading(change){
+            if(change){
+                //loading画面を出す
+                $('#loading').show();
+            }else{
+                //loading画面を消す
+                $('#loading').hide();
+            }
+        }
+        //Android,iOS環境かどうかを返す
+        //返値：bool
+        function isMobile(){
+            var uA = navigator.userAgent;
+            var ret = false;
+        
+            if(uA.indexOf('Android') > 0 || uA.indexOf('iPhone') > 0){
+                ret = true;
+            }
+        
+            return ret;
+        }
+        //環境によってアラートを出しわける
+        //引数：表示メッセージ
+        function customAlert(msg){
+            if(isMobile()){
+                ErrorAlert.showError(msg);
+            }else{
+                alert(msg);
+            }
+        }
+    </script>
+    <!--loadingパーツ ここまで-->
+</apex:component>

@@ -1,0 +1,263 @@
+<apex:page title="請求書照合画面"  controller="InvoiceVerificationController"  standardStylesheets="true" showHeader="false" docType="html-5.0" >
+    <apex:composition template="MB_PageTemplate">
+        <apex:define name="body">
+                <style type="text/css">
+                    /* この画面のスタイルシート */
+                    
+                    /* 請求書出力ボタン */
+                    .button_style{
+                        margin: 10px 0px;
+                    }
+
+                    #loading{
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        z-index: 999;
+                        width: 100%;
+                        height:100%;
+                        display: none;
+                        background: rgba(0,0,0,0.45);
+                    }
+                    div.gif{
+                        height: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                </style>
+                
+                <script>
+                    $(document).ready(function () {
+
+                        $('button#qr_load').click(function(){
+                            readQRCode();
+                        });
+
+                        $('input,select').on('keypress',function(ev){
+                            
+                            var $me = $(this);
+                            // バーコード入力項目で enter が押された時
+                            if(ev.keyCode == 13 && $me.attr("id") == "qr_code"){
+                                readQRCode();
+                            }
+                            // 金額入力項目で enter が押された時
+                            if(ev.keyCode == 13 && $me.attr("id") == "invoice_amount"){
+                                diffInvoice();
+                            }
+                        });
+
+                        $('button#diff').click(function(){
+                            diffInvoice();              
+                        });
+
+                        $('button#confirmed').click(function(){
+                            changeLoading(true);
+                            var id = $('#invoice_id').val();
+                            // var invoice_month = $('#invoice_month').text();
+                            {!$RemoteAction.InvoiceVerificationController.registOBICData}(
+                                id, // 渡すパラメータ
+                                function(result, event) {   // コールバック関数
+                                    if(event.status) {
+                                        if(result == "") {
+                                            // 登録完了
+                                            changeLoading(false);
+                                            alert('OBIC確認用データの登録が完了しました。');
+                                            $('#confirmed').prop('disabled', true);
+                                        } else {
+                                            changeLoading(false);
+                                            alert(result);
+                                        }
+                                    } else {
+                                        changeLoading(false);
+                                        alert("システムエラー");
+                                    }
+                                }
+                            )
+                            
+                        });
+                            
+                        function changeLoading(change){
+                            if(change){
+                                //loading画面を出す
+                                $('#loading').show();
+                            }else{
+                                //loading画面を消す
+                                $('#loading').hide();
+                            }
+                        }
+
+                        function readQRCode(){
+                            changeLoading(true);
+                            var qr = $('#qr_code').val();
+                            if(qr == '') {
+                                alert('QRコードを入力してください。');
+                                changeLoading(false);
+                            } else {
+                                {!$RemoteAction.InvoiceVerificationController.getInvoiceInfo}(
+                                    qr,   // 渡すパラメータ 
+                                    function(result, event){    // コールバック関数
+                                        if(event.status) {
+                                            if(result != null){
+
+                                                // 取得データの表示
+                                                $('#invoice_id').val(result['id']);
+                                                $('#invoice_info').val(result['name']);
+                                                $('#account_name').text(result['accountName']);
+                                                $('#invoice_month').text(result['invoiceMonth']);
+                                                $('#total_amount_tax_in').text(result['totalAmountTaxIn']);
+                                                $('#construction_number_name').text(result['constructionNumberName']);
+
+                                                // QR情報エリアの非活性化
+                                                $('#qr_code').attr('readonly',true);
+                                                $('#qr_code').css('background-color','#eee');
+                                                $('#qr_code').css('border','1px solid #ccc');
+                                                $('#qr_load').prop('disabled', true);
+
+                                                // 請求書情報エリアの表示
+                                                $('#info_area').toggle();
+
+                                                changeLoading(false);
+                                            }else{
+                                                alert('検索結果は0件です');
+                                                changeLoading(false);
+                                            }
+                                        }else{
+                                            changeLoading(false);
+                                            alert("システムエラー");
+                                        }
+                                    }
+                                );
+                                    
+                            }
+                        }
+                        
+                        function diffInvoice(){
+                            changeLoading(true);
+                            var id = $('#invoice_id').val();
+                            var amount = $('#invoice_amount').val();
+                            if(amount == '') {
+                                alert('請求書金額を入力してください。');
+                                changeLoading(false);
+                            } else {
+                                {!$RemoteAction.InvoiceVerificationController.invoiceVerification}(
+                                    id, amount,  // 渡すパラメータ 
+                                    function(result, event){    // コールバック関数
+                                        if(event.status) {
+                                            if(result == ""){
+                                                // 照合結果OK
+                                                alert('請求書のチェックが完了しました。');
+
+                                                // 確認完了エリアの表示
+                                                $('#confirmed_area').toggle();
+
+                                            }else{
+                                                // 照合結果NG
+
+                                                // エラーレポートのリンク先変更
+                                                $('#error_area').find('a').attr('href', result);
+
+                                                // エラーエリア表示
+                                                $('#error_area').toggle();
+                                                alert('請求書のチェックでエラーがありました。\nエラーレポートを確認ください。');
+                                            }
+
+                                            // 請求書情報エリアの非活性化
+                                            $('#invoice_amount').attr('readonly',true);
+                                            $('#invoice_amount').css('background-color','#eee');
+                                            $('#invoice_amount').css('border','1px solid #ccc');
+                                            $('#diff').prop('disabled', true);
+
+                                            changeLoading(false);
+
+                                        }else{
+                                            changeLoading(false);
+                                            alert("システムエラー");
+                                        }
+                                    }
+                                );
+                            }
+
+                        }
+                            
+                    });
+                </script>
+                
+                <!-- loadingパーツ-->
+                <div id="loading">
+                    <div class="gif">
+                        <img src="{!URLFOR($Resource.loadingGif100)}" />
+                    </div>
+                </div>
+                <!--loadingパーツ ここまで -->
+                
+                <apex:pageBlock title="請求書照合画面" id="Block">
+                    <div style="max-width:35%;clear: both;">
+                        <!--QRコードエリアここから-->
+                        <br/>
+                        <div id="qr_area">
+                            <apex:outputLabel >QRコード</apex:outputLabel>
+                            <br/>
+                            <input id="qr_code" type="text" value="" />
+                            <button type="button" id="qr_load" class="btn btn-primary button_style" >読込</button>
+                            <br/>
+                        </div>
+                        <!--QRコードエリアここまで-->
+
+                        <!--請求書情報エリアここから-->
+                        <br/>
+                        <hr style="margin-top:5px;margin-bottom:5px" />
+                        <div id="info_area" style="display:none;">
+                                <br/>
+
+                                <!-- 請求書情報名 -->
+                                <input id="invoice_id" type="text" value="" style="display:none" /> 
+                                <input id="invoice_info" type="text" value="" style="display:none" /> 
+
+                                <label style="font-weight:400;width:20%">仕入先</label>
+                                <label id='account_name' />
+                                <br/>
+
+                                <label style="font-weight:400;width:20%">請求月</label>
+                                <label id='invoice_month' />
+                                <br/>
+
+                                <label style="font-weight:400;width:20%">工事番号</label>
+                                <label id='construction_number_name' />
+                                <br/>
+
+                                <label style="font-weight:400;width:20%">請求金額</label>
+                                <label id='total_amount_tax_in' />
+                                <label >円</label>
+                                <br/>
+
+                                <label style="font-weight:400;width:20%">請求書金額</label>
+                                <input id="invoice_amount" class="number" type="text" value="" />
+                                <label >円</label>
+                                <br/>
+
+                                <br/>
+                                <!-- エラーエリアここから -->
+                                <div id="error_area" style="text-align: center;width: 80%;display:none;">
+                                        <a href="">エラーレポートへ</a>
+                                </div>
+                                <!-- エラーエリアここまで -->
+
+                                <button type="button" id="diff" class="btn btn-primary button_style" style="float:right" >照合</button>
+
+                                <div style="clear:both;"></div>
+
+                                <hr style="margin-top:5px;margin-bottom:5px" />
+
+                                <div id="confirmed_area" style="text-align: right;display:none;">
+                                        <button type="button" id="confirmed" class="btn btn-primary button_style" style="" >確認完了</button>
+                                </div>
+
+                        </div>
+                        <!--請求書情報エリアここまで-->
+
+                    </div>
+                </apex:pageBlock>
+        </apex:define>
+    </apex:composition>
+</apex:page>

@@ -1,0 +1,524 @@
+=================================================
+仮想ディレクトリのステータス確認
+./MegaCli -LDInfo -L all -aALL
+=================================================
+
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -LDInfo -L
+all -aALL
+
+
+Adapter 0 -- Virtual Drive Information:
+Virtual Drive: 0 (Target Id: 0)
+Name                :
+RAID Level          : Primary-5, Secondary-0, RAID Level Qualifier-3
+Size                : 1.818 TB
+State               : Degraded
+Strip Size          : 64 KB
+Number Of Drives    : 3
+Span Depth          : 1
+Default Cache Policy: WriteBack, ReadAdaptive, Direct, Write Cache OK if Bad BBU
+Current Cache Policy: WriteBack, ReadAdaptive, Direct, Write Cache OK if Bad BBU
+Access Policy       : Read/Write
+Disk Cache Policy   : Disk's Default
+Encryption Type     : None
+
+
+
+Exit Code: 0x00
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -LDInfo -L
+all -aALL
+
+
+Adapter 0 -- Virtual Drive Information:
+Virtual Drive: 0 (Target Id: 0)
+Name                :
+RAID Level          : Primary-5, Secondary-0, RAID Level Qualifier-3
+Size                : 1.818 TB
+State               : Degraded
+Strip Size          : 64 KB
+Number Of Drives    : 3
+Span Depth          : 1
+Default Cache Policy: WriteBack, ReadAdaptive, Direct, Write Cache OK if Bad BBU
+Current Cache Policy: WriteBack, ReadAdaptive, Direct, Write Cache OK if Bad BBU
+Access Policy       : Read/Write
+Disk Cache Policy   : Disk's Default
+Encryption Type     : None
+
+
+
+Exit Code: 0x00
+
+
+=================================================
+物理ディスクのステータス確認
+./MegaCli -PDList -aALL
+
+スロット2が｢Firmware state: Failed｣となっている
+=================================================
+
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -PDList -a
+ALL
+
+Adapter #0
+
+Enclosure Device ID: 252
+Slot Number: 0
+Enclosure position: 0
+Device Id: 5
+Sequence Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Online, Spun Up
+SAS Address(0): 0x4433221103000000
+Connected Port Number: 1(path0)
+Inquiry Data:             Z1D5F2YFST1000DM003-1CH162                      CC47  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+Enclosure Device ID: 252
+Slot Number: 1
+Enclosure position: 0
+Device Id: 6
+Sequence Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Online, Spun Up
+SAS Address(0): 0x4433221102000000
+Connected Port Number: 2(path0)
+Inquiry Data:             Z1D5LL0WST1000DM003-1CH162                      CC47  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+Enclosure Device ID: 252
+Slot Number: 2
+Enclosure position: 0
+Device Id: 4
+Sequence Number: 3
+Media Error Count: 679
+Other Error Count: 102
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Failed
+SAS Address(0): 0x4433221101000000
+Connected Port Number: 0(path0)
+Inquiry Data:             Z1D5LL47ST1000DM003-1CH162                      CC47  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+=========================================
+missing markのディスク確認
+=========================================
+
+
+=========================================
+HDDの入れ替え
+=========================================
+
+
+=========================================
+物理ディスクのステータス確認
+./MegaCli -PDList -aALL
+
+ステータスが｢Unconfigured(good), Spun Up｣
+=========================================
+
+Enclosure Device ID: 252
+Slot Number: 0
+Enclosure position: 0
+Device Id: 5
+Sequence Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Online, Spun Up
+SAS Address(0): 0x4433221103000000
+Connected Port Number: 1(path0)
+Inquiry Data:             Z1D5F2YFST1000DM003-1CH162                      CC47  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+Enclosure Device ID: 252
+Slot Number: 1
+Enclosure position: 0
+Device Id: 6
+Sequence Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Online, Spun Up
+SAS Address(0): 0x4433221102000000
+Connected Port Number: 2(path0)
+Inquiry Data:             Z1D5LL0WST1000DM003-1CH162                      CC47  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+Enclosure Device ID: 252
+Slot Number: 2
+Enclosure position: 0
+Device Id: 4
+Sequence Number: 1
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Unconfigured(good), Spun Up
+SAS Address(0): 0x4433221101000000
+Connected Port Number: 0(path0)
+Inquiry Data:             Z4YALT7CST1000DM003-1ER162                      CC46  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+=========================================
+#Missing markの状態変更
+
+./MegaCli -PDReplace Missing -PhysDrv\[252:2\] -Array0 -row2 -a0
+=========================================
+
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -PDReplace
+Missing -PhysDrv\[252:2\] -Array0 -row2 -a0
+
+Adapter: 0: Missing PD at Array 0, Row 2 is replaced.
+
+
+=========================================
+物理ディスクのステータス確認
+./MegaCli -PDList -aALL
+
+ステータスが｢Offline｣
+=========================================
+
+Enclosure Device ID: 252
+Slot Number: 2
+Enclosure position: 0
+Device Id: 4
+Sequence Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Offline
+SAS Address(0): 0x4433221101000000
+Connected Port Number: 0(path0)
+Inquiry Data:             Z4YALT7CST1000DM003-1ER162                      CC46  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+=========================================
+リビルド
+./MegaCli -PDRbld -Start -PhysDrv[252:2] -a0
+
+ステータスが｢Offline｣
+=========================================
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -PDRbld -S
+tart -PhysDrv[252:2] -a0
+
+Started rebuild progress on device(Encl-252 Slot-2)
+
+Exit Code: 0x00
+
+
+=========================================
+物理ディスクのステータス確認
+./MegaCli -PDList -aALL
+
+ステータスが｢Rebuild｣
+=========================================
+
+Enclosure Device ID: 252
+Slot Number: 2
+Enclosure position: 0
+Device Id: 4
+Sequence Number: 3
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Rebuild
+SAS Address(0): 0x4433221101000000
+Connected Port Number: 0(path0)
+Inquiry Data:             Z4YALT7CST1000DM003-1ER162                      CC46  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+***************************************************************************************************************************************************
+rebuildの状態確認
+./MegaCli -PDRbld -showprog -physdrv\[252:2\] -a0 ・これで経過がわかる。
+***************************************************************************************************************************************************
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -PDRbld -s
+howprog -physdrv\[252:2\] -a0
+
+Rebuild Progress on Device at Enclosure 252, Slot 2 Completed 2% in 2 Minutes.
+
+Exit Code: 0x00
+
+
+***************************************************************************************************************************************************
+rebuild完了
+./MegaCli -PDRbld -showprog -physdrv\[252:2\] -a0 
+***************************************************************************************************************************************************
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -PDRbld -s
+howprog -physdrv\[252:2\] -a0
+
+Device(Encl-252 Slot-2) is not in rebuild process
+
+
+***************************************************************************************************************************************************
+物理ディスクのステータス確認
+./MegaCli -PDList -aALL
+
+ステータスが｢Online, Spun Up｣
+***************************************************************************************************************************************************
+
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -PDList -a
+ALL
+
+Adapter #0
+
+Enclosure Device ID: 252
+Slot Number: 0
+Enclosure position: 0
+Device Id: 5
+Sequence Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Online, Spun Up
+SAS Address(0): 0x4433221103000000
+Connected Port Number: 1(path0)
+Inquiry Data:             Z1D5F2YFST1000DM003-1CH162                      CC47  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+Enclosure Device ID: 252
+Slot Number: 1
+Enclosure position: 0
+Device Id: 6
+Sequence Number: 2
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Online, Spun Up
+SAS Address(0): 0x4433221102000000
+Connected Port Number: 2(path0)
+Inquiry Data:             Z1D5LL0WST1000DM003-1CH162                      CC47  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+Enclosure Device ID: 252
+Slot Number: 2
+Enclosure position: 0
+Device Id: 4
+Sequence Number: 4
+Media Error Count: 0
+Other Error Count: 0
+Predictive Failure Count: 0
+Last Predictive Failure Event Seq Number: 0
+PD Type: SATA
+Raw Size: 931.512 GB [0x74706db0 Sectors]
+Non Coerced Size: 931.012 GB [0x74606db0 Sectors]
+Coerced Size: 931.0 GB [0x74600000 Sectors]
+Firmware state: Online, Spun Up
+SAS Address(0): 0x4433221101000000
+Connected Port Number: 0(path0)
+Inquiry Data:             Z4YALT7CST1000DM003-1ER162                      CC46  
+FDE Capable: Not Capable
+FDE Enable: Disable
+Secured: Unsecured
+Locked: Unlocked
+Needs EKM Attention: No
+Foreign State: None
+Device Speed: 6.0Gb/s
+Link Speed: 6.0Gb/s
+Media Type: Hard Disk Device
+Drive:  Not Certified
+Drive Temperature : N/A
+
+
+
+
+Exit Code: 0x00
+
+***************************************************************************************************************************************************
+論理ディスクの確認
+./MegaCli -LDInfo -Lall -aAll
+***************************************************************************************************************************************************
+
+/vmfs/volumes/521201ec-1be0f87c-a92b-6805ca174f38/osimage # ./MegaCli -LDInfo -L
+all -aAll
+
+
+Adapter 0 -- Virtual Drive Information:
+Virtual Drive: 0 (Target Id: 0)
+Name                :
+RAID Level          : Primary-5, Secondary-0, RAID Level Qualifier-3
+Size                : 1.818 TB
+State               : Optimal
+Strip Size          : 64 KB
+Number Of Drives    : 3
+Span Depth          : 1
+Default Cache Policy: WriteBack, ReadAdaptive, Direct, Write Cache OK if Bad BBU
+Current Cache Policy: WriteBack, ReadAdaptive, Direct, Write Cache OK if Bad BBU
+Access Policy       : Read/Write
+Disk Cache Policy   : Disk's Default
+Encryption Type     : None
+
+
+
+Exit Code: 0x00
+
+

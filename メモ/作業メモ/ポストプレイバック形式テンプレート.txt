@@ -1,0 +1,25 @@
+<%
+	Dim sErrorMessage
+	sErrorMessage = ""
+	Dim sItemCode
+	sItemCode = ""
+
+	If Request.Method = "POST" Then
+		セッションにデータを保存 = sItemCode
+		If 入力内容OK Then
+			Response.Redirect 次の画面
+		End If
+		sErrorMessage = エラー文言
+	Else
+		sItemCode = セッションからデータを取得
+	End If
+%>
+<HTML>
+<% If エラーが発生したら Then %>
+    <%=sErrorMessage%>
+<% End If %>
+	<FORM>
+		商品コード<INPUT TYPE="TextBox" name="ItemCode" value="<%=sItemCode%>" />
+		<INPUT TYPE="Submit" value="次へ" />
+	</FORM>
+</HTML>

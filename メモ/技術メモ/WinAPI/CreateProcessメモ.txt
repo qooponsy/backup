@@ -1,0 +1,42 @@
+
+BOOL CreateProcess(
+  LPCTSTR lpApplicationName,                 // 実行可能モジュールの名前
+  LPTSTR lpCommandLine,                      // コマンドラインの文字列
+  LPSECURITY_ATTRIBUTES lpProcessAttributes, // セキュリティ記述子
+  LPSECURITY_ATTRIBUTES lpThreadAttributes,  // セキュリティ記述子
+  BOOL bInheritHandles,                      // ハンドルの継承オプション
+  DWORD dwCreationFlags,                     // 作成のフラグ
+  LPVOID lpEnvironment,                      // 新しい環境ブロック
+  LPCTSTR lpCurrentDirectory,                // カレントディレクトリの名前
+  LPSTARTUPINFO lpStartupInfo,               // スタートアップ情報
+  LPPROCESS_INFORMATION lpProcessInformation // プロセス情報
+);
+
+
+BOOL CreateProcess(
+  exeファイル名,
+  オプション指定,
+  null,
+  null,
+  false,
+  ※よく読め,
+  null おそらく,
+  null,
+  null たぶん,
+  指定必須	
+  	→hProcessを取得してプロセスの終了待ち
+  		→waitForSingleObject ※API
+  			こいつにhProcessを渡せばそのプロセス終了まで待機
+);
+
+
+
+// exeファイル実行
+	/*
+	PROCESS_INFORMATION p;
+	STARTUPINFO s;
+	ZeroMemory(&s, sizeof(s));
+	s.cb = sizeof(s);
+	
+	int ret = CreateProcessA(NULL, a, NULL, NULL, false, NULL, NULL, NULL, &s, &p);
+	*/

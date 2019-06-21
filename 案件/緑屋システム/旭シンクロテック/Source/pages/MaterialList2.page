@@ -1,0 +1,124 @@
+<apex:page title="資材一覧②" controller="MaterialController" action="{!checkRedirect}" standardStylesheets="false" showHeader="false">
+<head>
+    <c:MaterialHtmlHead />
+</head>
+<body>
+    <!--ヘッダ-->
+    <c:MaterialListHeader />
+    <apex:form >
+    <apex:actionFunction name="transition1" action="{!transition1}"/><!--資材選択1へ-->
+    <apex:actionFunction name="transitionList1" action="{!transitionList1}"/><!--資材一覧1へ-->
+    <!-- <apex:actionFunction name="transitionToList1" action="{!transitionToList1}"/>資材一覧1へ -->
+    <apex:inputText value="{!ConstructionNumber}" style="display:none" /><!--工事番号-->
+    <apex:inputText value="{!Procurementnumber}" style="display:none" /><!--調達番号-->
+    <apex:inputText value="{!division}" style="display:none" /><!--区分-->
+    <apex:inputText value="{!ConstructionName}" styleClass="" style="display:none"/><!--工事名-->
+    <apex:inputText value="{!ConstructionRecordTypeId}" styleClass="" style="display:none"/><!--工事番号レコードタイプ-->
+    <div class="container">
+        <div style="overflow-y:scroll;height:300px"><!--スクロールエリアここから-->
+            <table class="table table-bordered">
+                <tr class="btn-primary-color">
+                    <th style="text-align:center">資材一覧</th>
+                </tr>
+                <apex:repeat value="{!List2InputList}" var="InputItem"><!--List<Map<String,String>> / Input-->
+                    <tr>
+                        <td style="list-style:none">
+                            <li><!--ステータス/数量-->
+                                <label style="font-weight:400;width:30%">ステータス：</label>
+                                入力中
+                                <div style="float:right">数量：{!InputItem['QuantityC']}{!InputItem['QuantityUnitC']}</div><br/>
+                            </li>
+                            <li><!--資材名-->
+                                <label style="font-weight:400;width:30%">資材名：</label>
+                                {!InputItem['ItemNameR']}
+                            </li><hr style="margin-top:5px;margin-bottom:5px" />
+                            <li><!--仕入れ先-->
+                                <label style="font-weight:400;width:30%">仕入先：</label>
+                                {!InputItem['VendorR']}
+                            </li>
+                            <li><!--納入先-->
+                                <label style="font-weight:400;width:30%">納入先：</label>
+                                {!InputItem['DeliveryPlaceR']}
+                            </li>
+                            <li><!--希望納期-->
+                                <label style="font-weight:400;width:30%">希望納期：</label>
+                                {!InputItem['DesiredDeliveryDateC']}  {!InputItem['AmPm']}
+                            </li>
+                        </td>
+                    </tr>
+                </apex:repeat><!--Input End-->
+                <apex:repeat value="{!List2RejectionList}" var="RejectionItem"><!--List<Map<String,String>> / Rejection-->
+                    <tr>
+                        <td style="list-style:none">
+                            <li><!--ステータス/数量-->
+                                <label style="font-weight:400;width:30%">ステータス：</label>
+                                却下
+                                <div style="float:right">数量：{!RejectionItem['QuantityC']}{!RejectionItem['QuantityUnitC']}</div><br/>
+                            </li>
+                            <li><!--資材名-->
+                                <label style="font-weight:400;width:30%">資材名：</label>
+                                {!RejectionItem['ItemNameR']}
+                            </li><hr style="margin-top:5px;margin-bottom:5px" />
+                            <li><!--仕入れ先-->
+                                <label style="font-weight:400;width:30%">仕入先：</label>
+                                {!RejectionItem['VendorR']}
+                            </li>
+                            <li><!--納入先-->
+                                <label style="font-weight:400;width:30%">納入先：</label>
+                                {!RejectionItem['DeliveryPlaceR']}
+                            </li>
+                            <li><!--希望納期-->
+                                <label style="font-weight:400;width:30%">希望納期：</label>
+                                {!RejectionItem['DesiredDeliveryDateC']}  {!RejectionItem['AmPm']}
+                            </li>
+                        </td>
+                    </tr>
+                </apex:repeat><!--Rejection End-->
+            </table>
+        </div><!--スクロールエリアここまで-->
+    </div>
+    <div class="container" style="margin-top:10px">
+        <!-- <div id="back" class="btn btn-primary">戻る</div> -->
+        <apex:commandLink action="{!transitionToList1}" value="戻る" styleClass="btn btn-primary" />
+        <apex:outputPanel layout="none" rendered="{!division=='B材（小口）'}">
+            <div class="btn btn-primary" data-toggle="modal" data-target="#approve" style="float:right">承認申請</div>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!division=='B材（大口）'}">
+            <div class="btn btn-primary" data-toggle="modal" data-target="#approve" style="float:right">更新</div>
+        </apex:outputPanel>
+    </div>
+    <!--モーダル/申請-->
+    <div class="modal fade" id="approve" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align:center">
+                    <apex:outputPanel layout="none" rendered="{!division=='B材（小口）'}">
+                        承認申請します。<br/>よろしいですか？<br/><br/>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="none" rendered="{!division=='B材（大口）'}">
+                        更新します。<br/>よろしいですか？<br/><br/>
+                    </apex:outputPanel>
+                    <!-- <div id="submit" class="btn btn-primary">はい</div><br/><br/> -->
+                    <apex:commandLink action="{!appUpdateList2}" value="はい" styleClass="btn btn-primary" /><br/><br/>
+                    <div class="btn btn-primary mclose">いいえ</div>
+                </div>
+            </div>
+        </div>
+    </div><!--モーダル/申請　ここまで-->
+    
+</apex:form>
+</body>
+<script>
+$(document).ready(function () {
+    //モーダル閉じる
+    $('div.mclose').click(function(){
+        //$(this).parent('div.modal').modal('hide');
+        $('#approve').modal('hide');
+    });
+    //ページ遷移用関数
+    $('#submit').click(function(){
+        transition1(); //資材選択1へ
+    });
+});
+</script>
+</apex:page>

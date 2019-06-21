@@ -1,0 +1,7 @@
+■dump作成SQL
+
+・dump出力
+	mysqldump -u root Regulus_Pro > Pro20140314.sql
+
+・dump取込(上書いてしまうので要注意)
+	mysql -u root Regulus_Pro < Pro20140314.sql

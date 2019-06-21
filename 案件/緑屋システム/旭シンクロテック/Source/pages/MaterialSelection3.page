@@ -1,0 +1,116 @@
+<apex:page title="資材選択③" controller="MaterialController" action="{!checkRedirect}" standardStylesheets="false" showHeader="false">
+<head>
+    <c:MaterialHtmlHead />
+</head>
+<body>
+    <!--ヘッダ-->
+    <c:MaterialHeader />
+    <apex:form >
+    <apex:actionFunction name="transition1" action="{!transition1}"/><!--資材選択1へ-->
+    <apex:actionFunction name="transitionToList1" action="{!transitionToList1}"/><!--資材一覧1へ-->
+    <!-- <apex:actionFunction name="transition2" action="{!transition2}"/>資材選択2へ -->
+    <apex:actionFunction name="transition4" action="{!transition4}"/><!--資材選択4へ-->
+    <apex:inputText value="{!ConstructionNumber}" style="display:none" /><!--工事番号-->
+    <apex:inputText value="{!Procurementnumber}" style="display:none" /><!--調達番号-->
+    <apex:inputText value="{!division}" style="display:none" /><!--区分-->
+    <apex:inputText value="{!ConstructionName}" styleClass="" style="display:none"/><!--工事名-->
+    <apex:inputText value="{!ConstructionRecordTypeId}" styleClass="" style="display:none"/><!--工事番号レコードタイプ-->
+    <div class="container">
+        <table class="table table-bordered" style="margin-bottom:0px">
+            <thead class="btn-primary-color">
+                <tr>
+                    <th scope="col" style="text-align:center">{!material}</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-bordered">
+            <thead class="btn-primary-color">
+                <tr>
+                    <th scope="col" colspan="2" style="text-align:center">{!item}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="width:50%"><!--一個目のスクロールテーブル-->
+                        <div style="overflow-y:scroll;height:200px">
+                            <table class="table table-bordered table-parent">
+                                <apex:repeat value="{!Selection3Display}" var="standard1"><!--規格1の繰り返しブロック-->
+                                    <tr>
+                                        <apex:variable var="sList" value="{!Selection3Display[standard1]}" />
+                                        <apex:outputPanel rendered="{!sList.size>0}" layout="none"><!--規格2がある場合の規格1ボタン-->
+                                            <th class="norm" name="{!standard1}" scope="col" style="padding:0px">
+                                                <button type="button" class="btn btn-default btn-block avail" data-loading-text="{!IF(LEN(standard1)==0, '※規格1なし', standard1)}" autocomplete="off" style="width:100%;text-align:left;font-weight:600;border-color:#fff;border-radius:0px">{!IF(standard1=='', '※規格1なし', standard1)}</button>
+                                            </th>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!sList.size==0}" layout="none"><!--規格2がない場合の規格1ボタン-->
+                                            <th class="norm" name="{!standard1}" scope="col" style="padding:0px">
+                                                <apex:commandLink action="{!transition3Next}" value="{!IF(LEN(standard1)==0, '※規格1なし', standard1)}" styleClass="btn btn-default" style="width:100%;text-align:left;font-weight:600;border-color:#fff;border-radius:0px">
+                                                    <apex:param name="classification" value="{!classification}" /><!--分類-->
+                                                    <apex:param name="material" value="{!material}" /><!--材質-->
+                                                    <apex:param name="item" value="{!item}" /><!--品名-->
+                                                    <apex:param name="standard1" value="{!standard1}" /><!--規格1-->
+                                                </apex:commandLink>
+                                            </th>
+                                        </apex:outputPanel>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+                        </div>
+                    </td>
+                    <td style="width:50%"><!--二個目のスクロールテーブル-->
+                        <div id="scroll_area" style="overflow-y:scroll;height:200px">
+                            <table class="table table-bordered">
+                                <apex:repeat value="{!Selection3Display}" var="standard1"><!--規格2のブロック　classに規格1を入れて表示制御に使う-->
+                                    <apex:variable var="sList" value="{!Selection3Display[standard1]}" />
+                                    <apex:repeat value="{!sList}" var="standard2">
+                                        <tr class="display_{!standard1}" style="display:none">
+                                            <th class="btn-default" scope="col" style="padding:0px">
+                                                <apex:commandLink action="{!transition3Next}" value="{!IF(standard2=='nullデータ','※規格2なし', standard2)}" styleClass="btn btn-default" style="width:100%;text-align:left;font-weight:600;border-color:#fff;border-radius:0px">
+                                                    <apex:param name="classification" value="{!classification}" /><!--分類-->
+                                                    <apex:param name="material" value="{!material}" /><!--材質-->
+                                                    <apex:param name="item" value="{!item}" /><!--品名-->
+                                                    <apex:param name="standard1" value="{!standard1}" /><!--規格1-->
+                                                    <apex:param name="standard2" value="{!IF(standard2=='nullデータ','', standard2)}" /><!--規格2-->
+                                                </apex:commandLink>
+                                            </th>
+                                        </tr>
+                                    </apex:repeat>
+                                </apex:repeat>
+                            </table>    
+                        </div>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>    
+    </div>
+    <div class="container" style="margin-top:10px">
+        <apex:commandLink value="戻る" action="{!transition3Back}" style="" styleClass="btn btn-primary">
+            <apex:param value="" name="" />
+        </apex:commandLink>
+    </div>
+</apex:form>
+</body>
+<script>
+$(document).ready(function () {
+    $('th.norm').click(function(){
+        var norm2 = $(this).attr('name');
+        //規格2スクロールエリア直下のdivをdisplay:noneに変更
+        $('#scroll_area').find('tr').hide();
+        $('tr.display_' + norm2.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, '\\\$&')).show();
+        //押されたボタンを非活性化
+        $(this).children('button').button('loading');
+        //押されたボタンの色を変更
+        $(this).children('button').css('background-color', 'silver');
+        //他ボタンを活性化
+        $(this).children('button').parents('table.table-parent').find('button:disabled').button('reset');
+        //他のボタンの色を戻す
+        $(this).children('button').parents('table.table-parent').find('button:disabled').css('background-color', '#fff');
+    });
+    //ページ遷移用関数
+    $('th.fin').click(function(){
+        transition4(); //資材選択4へ
+    });
+});
+</script>
+</apex:page>

@@ -1,0 +1,92 @@
+<apex:page title="テスト①ページ" controller="Test1Controller" standardStylesheets="false" showHeader="false">
+        <head>
+            <c:MaterialHtmlHead />
+        </head>
+        <body>
+        <apex:form id="form">
+            テスト<br/>
+
+            <br/ >
+            <button type="button" id="checkInitData">初期値確認</button>
+            <apex:actionFunction name="CheckInitData" action="{!CheckInitData}"/><br/>
+
+            <br/>
+            <button type="button" id="keta">桁数取得</button>
+            <apex:actionFunction name="getKeta" action="{!getKeta}"/><br/>
+
+            <br/ >
+            <button type="button" id="recodeType">レコードタイプ取得</button>
+            <apex:actionFunction name="getRecodeType" action="{!getRecodeType}"/><br/>
+
+            <br/ >
+            <button type="button" id="edit">更新処理</button>
+            <apex:actionFunction name="UpdateTest" action="{!UpdateTest}"/><br/>
+
+            <br/ >
+            <button type="button" id="delete">削除処理</button>
+            <apex:actionFunction name="DeleteTest" action="{!DeleteTest}"/><br/>
+
+            <br/ >
+            <button type="button" id="siire">仕入先取得</button>
+            <apex:actionFunction name="GetAccountList" action="{!GetAccountList}"/><br/>
+
+            <apex:repeat value="{!a}" var="b">
+                <apex:outputLabel value="{!a[b]}" /><br/>
+            </apex:repeat>
+
+        </apex:form>
+    </body>
+    <script>
+        $(document).ready(function(){
+            $('button#checkInitData').click(function(){
+                CheckInitData();
+            });
+        });
+
+        $(document).ready(function(){
+            $('button#keta').click(function(){
+                getKeta();
+            });
+        });
+
+        $(document).ready(function(){
+            $('button#recodeType').click(function(){
+                getRecodeType();
+            });
+        });
+
+        $(document).ready(function(){
+            $('button#edit').click(function(){
+                UpdateTest();
+            });
+        });
+
+        $(document).ready(function(){
+            $('button#delete').click(function(){
+                DeleteTest();
+            });
+        });
+
+        $(document).ready(function(){
+            $('button#siire').click(function(){
+                GetAccountList();
+            });
+        });
+        $('button.doparce').click(function(){
+            timeParce();
+        });
+
+        // $(function() {
+        //     // ボタンクリックで時刻を更新
+        //     $('#keta').click(function(){
+        //         getKeta();
+        //     });
+        // });
+
+    // $(document).ready(function () {
+    //     $('#keta').click(function(){
+    //         getKeta();
+    //     });
+    // });
+    </script>
+</apex:page>

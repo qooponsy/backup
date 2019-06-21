@@ -1,0 +1,16 @@
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.LoginForm.resources
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.MainForm.resources
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.StartForm.resources
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.Properties.Resources.resources
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.csproj.GenerateResource.cache
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.csproj.CoreCompileInputs.cache
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\bin\Debug\DaihonConverter.exe.config
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\bin\Debug\DaihonConverter.exe
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\bin\Debug\DaihonConverter.pdb
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.exe
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.pdb
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\bin\Debug\ColorButton.dll
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.LineSelectForm.resources
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.OutputForm.resources
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.csproj.CopyComplete
+C:\_sagae\_案件\ソアーシステム\project\brc_DaihonSystem\DaihonConverter\DaihonConverter\obj\Debug\DaihonConverter.csprojAssemblyReference.cache

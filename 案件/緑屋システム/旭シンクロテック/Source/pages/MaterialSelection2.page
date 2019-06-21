@@ -1,0 +1,271 @@
+<apex:page title="資材選択②" controller="MaterialController" action="{!checkRedirect}" standardStylesheets="false" showHeader="false">
+<head>
+    <c:MaterialHtmlHead />
+</head>
+<body>
+    <!--ヘッダ-->
+    <c:MaterialHeader />
+    <apex:form >
+    <apex:actionFunction name="transition1" action="{!transition1}"/><!--資材選択1へ-->
+    <apex:actionFunction name="transition3" action="{!transition3}"/><!--資材選択3へ-->
+    <apex:actionFunction name="transition2Next" action="{!transition2Next}"/><!--資材選択3or4へ-->
+    <apex:actionFunction name="transitionToList1" action="{!transitionToList1}"/><!--資材一覧1へ-->
+    <apex:actionFunction name="transition2SearchNext" action="{!transition2SearchNext}"/><!--資材選択4へ-->
+    <apex:inputText value="{!ConstructionNumber}" style="display:none" /><!--工事番号-->
+    <apex:inputText value="{!Procurementnumber}" style="display:none" /><!--調達番号-->
+    <apex:inputText value="{!division}" style="display:none" /><!--区分-->
+    <!--検索画面用の送信input-->
+    <apex:inputText value="{!classification}" styleClass="classification" style="display:none"/><!--分類-->
+    <apex:inputText value="{!material}" styleClass="material" style="display:none"/><!--材質-->
+    <apex:inputText value="{!item}" styleClass="item" style="display:none"/><!--品名-->
+    <apex:inputText value="{!standard1}" styleClass="standard1" style="display:none"/><!--規格1-->
+    <apex:inputText value="{!standard2}" styleClass="standard2" style="display:none"/><!--規格2-->
+    <apex:inputText value="{!size}" styleClass="size" style="display:none"/><!--サイズ-->
+    <apex:inputText value="{!unit}" styleClass="unit" style="display:none"/><!--数量単位-->
+    <apex:inputText value="{!ConstructionName}" styleClass="" style="display:none"/><!--工事名-->
+    <apex:inputText value="{!ConstructionRecordTypeId}" styleClass="" style="display:none"/><!--工事番号レコードタイプ-->
+    <!---->
+    <div class="container">
+        <div class="btn-parent" style="text-align:center;margin-bottom:10px"><!--テーブルでボタングループを試作-->
+            <div class="menu_buttom_new">
+                <apex:variable var="buttonCount" value="{!1}" />
+                <apex:repeat value="{!Selection2Display}" var="Classification">
+                    <div class="inner_buttom"><button type="button" class="btn btn-primary btn-block category avail substitution-tgt" data-loading-text="{!Classification}" autocomplete="off" name="class_{!buttonCount}" style="border-color:#6fb6f3;border-radius:0px">{!Classification}</button></div>
+                    <apex:variable var="buttonCount" value="{!buttonCount + 1}" />
+                </apex:repeat>
+            </div><br/>
+        </div>
+        <div style="text-align:center" id="search-area">
+            <input id="keyword" type="text" disabled="true" value="" />
+            <!-- <apex:inputText id="keyword" value=""  /> -->
+            <!-- <div class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search"><button class="btn btn-primary" disabled="true">検索</button></div><br/> -->
+            <!-- <div class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search"><span class="glyphicon glyphicon-search" aria-hidden="true" /></div><br/> -->
+            <!-- <button class="btn btn-primary" type="button" disabled="true" data-toggle="modal" data-target="#search">検索</button><br/> -->
+            <!-- <button class="btn btn-primary" type="button" disabled="true" onclick="return searchKeyword()" >検索</button><br/> -->
+            <button type="button" id="search" class="btn btn-primary" disabled="true">検索</button><br/>
+            <!-- <div class="btn btn-primary mdlmdl">もーだる</div> -->
+        </div>
+        <div id="scroll_area" style="overflow-y:scroll;height:300px;margin-top:10px;border-style:solid;border-width:1px;border-color:#e8e8e8"><!--スクロールエリアここから-->
+            <apex:variable var="count" value="{!1}" />
+            <apex:repeat value="{!Selection2Display}" var="Classification"><!--ボタングループ(分類)の単位-->
+                <div id="class_{!count}" style="display:none" name="{!Classification}">
+                    <apex:repeat value="{!Selection2Display[Classification]}" var="Material"><!--材質単位-->
+                        <table class="table table-bordered" style="margin-bottom:0px">
+                            <tr class="btn-primary-color switch">
+                                <th colspan="3" class="substitution-tgt" style="text-align:center">{!Material}</th><!--ここはアコーディオンのボタンとなる-->
+                            </tr>
+                            <apex:repeat value="{!Selection2Display[Classification][Material]}" var="ItemList"><!--品名ボタンの1行単位-->
+                                <tr>
+                                    <apex:repeat value="{!ItemList}" var="itemRow"><!--品名のボタン生成(ロジック側で3つまで入れる)-->
+                                        <td class="slide_td btn-default select-end" style="text-align:center;display:none;padding:8px 5px;width:33.333%;height:65px">
+                                            <label class="slide-label substitution-tgt">{!itemRow}</label>
+                                            <input type="text" name="Classification" value="{!Classification}" hidden="true" />
+                                            <input type="text" name="Material" value="{!Material}" hidden="true" />
+                                            <input type="text" name="Item" value="{!itemRow}" hidden="true" />
+                                        </td>
+                                    </apex:repeat>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </apex:repeat>
+                </div>
+                <apex:variable var="count" value="{!count + 1}" />
+            </apex:repeat>
+        </div><!--スクロールエリアここまで-->
+        <div class="container" style="margin-top:10px">
+            <apex:commandLink value="戻る" action="{!transition2Back}" style="" styleClass="btn btn-primary" />
+            <!-- <div class="btn btn-primary slist" style="float:right">選択済み資材一覧</div>ヘッダーに移動予定 -->
+        </div>
+    </div>
+<!--モーダル/検索結果-->
+<div class="modal fade" id="mdlSearch" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body" style="text-align:center">
+                <!--modal body-->
+                資材検索結果<br/>
+                <table class="table table-bordered" style="text-align:left">
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--モーダル/検索結果　ここまで-->
+</apex:form>
+</body>
+<script>
+$(document).ready(function () {
+    textSubstitution();
+    $('div.mdlmdl').click(function(){
+        $('#mdlSearch').modal('show');
+    });
+    $('tr.switch').click(function(){
+        //引数に開閉速度を指定
+        $(this).parents('tbody').find('td.slide_td').slideToggle('fast');
+        $(this).parents('tbody').find('label.slide-label').slideToggle('fast');
+    });
+    //カテゴリ選択イベント
+    //categoryとついているボタンの中でavailがついているものをイベントの対象とする
+    $('button.category.avail').click(function(){
+        //アコーディオンを収納
+        hideall();
+        //nameに対象グループのidを収納
+        var name = $(this).attr('name');
+        //スクロールエリア直下のdivをdisplay:noneに変更
+        $('#scroll_area').children('div').hide();
+        //対象idを可視化
+        $('#' + name).show();
+        //押されたボタンを非活性化(css自動)
+        $(this).button('loading');
+        //他ボタンを活性化
+        $(this).parents('div.btn-parent').find('button:disabled').button('reset');
+        //categoryのavailがついていないものにavailを付与
+        $(this).parents('div.btn-parent').find('button.category').not('avail').addClass('avail');
+        //押されたボタンのクラスからavailを削除
+        $(this).removeClass('avail');
+        //検索エリアの有効化
+        $('#search-area').children('input').prop("disabled", false);
+        $('#search-area').children('button').prop("disabled", false);
+    });
+    //ページ遷移用関数
+    // $('td.btn-default').click(function(){
+    //     transition3(); //資材選択3へ
+    // });
+    $('div.slist').click(function(){
+        transitionList1(); //資材選択3へ
+    });
+    $('button#search').click(function(){
+        changeLoading(true);
+        var keyword = $('#keyword').val();
+        var classification = $('div.btn-parent').find('button:not(.avail)').text();
+        if(keyword == '') {
+            changeLoading(false);
+            customAlert('検索するキーワードを入力してください。');
+        }else{
+            var $mdlid = $('#mdlSearch');
+            {!$RemoteAction.MaterialController.SearchItemList}(
+                classification, keyword,   // 渡すパラメータ 
+                function(result, event){    // コールバック関数
+                    if(event.status) {
+                        if(result != null){
+                            if(result.length == 0){
+                                customAlert('検索結果は0件です');
+                                changeLoading(false);
+                            }else{
+                            ////結果を受け取ってモーダルを更新生成する
+                            var $tgt = $mdlid.find('tbody');
+                            //モーダルの中身をリセット
+                            $tgt.empty();
+                            //帰ってきた結果を回してtr行を生成する
+                            // ※  List1の525行目付近を参照  ※
+                            result.forEach(function(val, index, ar){
+                                $tgt.append('<tr><td class="btn-default search-result"><label style="color:#337ab7">' + val['Name'] + '</label></td><td class="Classification" style="display:none"><label style="color:#337ab7">' + val['Classification__c'] + '</label></td><td class="Material" style="display:none"><label style="color:#337ab7">' + val['Material__c'] + '</label></td><td class="Item" style="display:none"><label style="color:#337ab7">' + val['Item__c'] + '</label></td><td class="Standard1" style="display:none"><label style="color:#337ab7">' + val['Standard1__c'] + '</label></td><td class="Standard2" style="display:none"><label style="color:#337ab7">' + val['Standard2__c'] + '</label></td><td class="Size" style="display:none"><label style="color:#337ab7">' + val['Size__c'] + '</label></td><td class="Unit" style="display:none"><label style="color:#337ab7">' + val['Unit__c'] + '</label></td></tr>');
+                            })
+                            //モーダルを表示
+                            $('#mdlSearch').modal('show');
+                            changeLoading(false);
+                            }
+                        }else{
+                            changeLoading(false);
+                            customAlert("システムエラー");
+                        }
+                    }else{
+                        changeLoading(false);
+                        customAlert("システムエラー");
+                    }
+                }
+            );
+        }
+    });
+    //資材マスタ選択イベント
+    //※on clickにしないと追加した要素に対してイベントが起きない
+    $(document).on("click",'td.search-result', function(){
+        //押下箇所の値を取得 - 近くのhidden項目から取得
+        var classification = $(this).siblings('td.Classification').children('label').text(); //分類
+        var material = $(this).siblings('td.Material').children('label').text(); //材質
+        var item = $(this).siblings('td.Item').children('label').text(); //品名
+        var standard1 = $(this).siblings('td.Standard1').children('label').text() == 'undefined' ? '' : $(this).siblings('td.Standard1').children('label').text(); //規格1
+        var standard2 = $(this).siblings('td.Standard2').children('label').text() == 'undefined' ? '' : $(this).siblings('td.Standard1').children('label').text(); //規格2
+        var size = $(this).siblings('td.Size').children('label').text(); //サイズ
+        var unit = $(this).siblings('td.Unit').children('label').text(); //数量単位
+        // var id = ''; //資材ID
+        //取得した値をPOSTする際のapex:inputに出力
+        $('input.classification').val(classification); //分類
+        $('input.material').val(material); //材質
+        $('input.item').val(item); //品名
+        $('input.standard1').val(standard1); //規格1
+        $('input.standard2').val(standard2); //規格2
+        $('input.size').val(size); //サイズ
+        $('input.unit').val(unit); //数量単位
+        //actionFunctionにて設定した選択4画面への遷移関数を呼び出し
+        // alert('選択4に遷移');
+        // changeLoading(false);
+        // $('#mdlSearch').modal('hide'); //検証用
+        transition2SearchNext();
+    });
+    //品名選択時のイベント
+    $('td.select-end').click(function(){
+        var classification = $(this).find('input[name="Classification"]').val() //分類
+        var material = $(this).find('input[name="Material"]').val() //材質
+        var item = $(this).find('input[name="Item"]').val() //品名
+        classification = classification.split('_')[1];
+        material = material.split('_')[1];
+        item = item.split('_')[1];
+
+        $('input.classification').val(classification); //分類
+        $('input.material').val(material); //材質
+        $('input.item').val(item); //品名
+
+        transition2Next();
+    });
+});
+//アコーディオン全収納
+function hideall(){
+    $('tr.switch').parents('tbody').find('label.slide-label').hide();
+    $('tr.switch').parents('tbody').find('td.slide_td').hide();
+};
+
+//並び替えに使用した文字列を消去する
+function textSubstitution(){
+    changeLoading(true);
+    /*分類ボタン*/
+    var $tgtClassification = $('button.substitution-tgt');
+    for(i = 0; i < $tgtClassification.length; i++){
+        //ボタンのテキスト取得
+        var txt = $tgtClassification.eq(i).text();
+        //「_」で分けて本体を取得
+        txt = txt.split('_')[1];
+        //元の場所に戻す(切り替え先のテキストも)
+        $tgtClassification.eq(i).text(txt);
+        $tgtClassification.eq(i).attr('data-loading-text',txt);
+    }
+    /*分類ボタンここまで*/
+    /*材質ボタン*/
+    var $tgtMaterial = $('th.substitution-tgt');
+    for(i = 0; i < $tgtMaterial.length; i++){
+        //ボタンのテキスト取得
+        var txt = $tgtMaterial.eq(i).text();
+        //「_」で分けて本体を取得
+        txt = txt.split('_')[1];
+        //元の場所に戻す(切り替え先のテキストも)
+        $tgtMaterial.eq(i).text(txt);
+    }
+    /*材質ボタンここまで*/
+    /*品名ボタン*/
+    var $tgtItem = $('label.substitution-tgt');
+    for(i = 0; i < $tgtItem.length; i++){
+        //ボタンのテキスト取得
+        var txt = $tgtItem.eq(i).text();
+        //「_」で分けて本体を取得
+        txt = txt.split('_')[1];
+        //元の場所に戻す(切り替え先のテキストも)
+        $tgtItem.eq(i).text(txt);
+    }
+    /*品名ボタンここまで*/
+    changeLoading(false);
+};
+
+</script>
+
+</apex:page>

@@ -1,0 +1,37 @@
+
+VSCode_変数置換
+Variable substitution
+
+VS Codeは、launch.jsonで文字列の内側の変数置換をサポートし、そして、次の定義済み変数を持っています。：
+
+$ {workspaceRoot} VS Codeで開いたフォルダのパス
+${workspaceRootFolderName} VSコードで開かれた斜線無し（/）のフォルダの名前
+${file}現在開いているファイル
+$ {relativeFile} workspaceRootを基準とした現在開いているファイル
+${fileBasename}現在開かれたファイルの元の名前
+${fileDirname}現在開かれているファイルのディレクトリ名
+${fileExtname}現在開かれているファイルの拡張子
+${cwd}起動時のタスク実行環境の現在の作業ディレクトリ
+
+
+
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Listen for XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9001,
+            "serverSourceRoot": "/var/www/html",
+            "localSourceRoot": "C:/_sagae/_案件/日本ジェネティクス/_project/NGEN-Web"
+        },
+        {
+            "name": "Launch currently open script",
+            "type": "php",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${fileDirname}",
+            "port": 9001
+        }
+    ]
+}

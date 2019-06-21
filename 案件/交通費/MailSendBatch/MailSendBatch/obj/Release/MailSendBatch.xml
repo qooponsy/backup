@@ -1,0 +1,219 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+MailSendBatch
+</name>
+</assembly>
+<members>
+<member name="T:MailSendBatch.SendMailDB">
+ <summary>
+ DB接続処理のクラス
+ </summary>
+</member>
+<member name="T:MailSendBatch.S_BulkMail">
+ <summary>
+ S_BulkMailテーブルへの接続クラス
+ </summary>
+</member>
+<member name="T:MailSendBatch.T_Carfare">
+ <summary>
+ T_Carfareテーブルへの接続クラス
+ </summary>
+</member>
+<member name="M:MailSendBatch.MailSendBatch.SendBulkMail">
+ <summary>
+ 一括メールチェック
+     BilkMailテーブルのステータス = 0のものをすべて取得する
+     取得したデータが1件以上でForEachを回す
+     データごとにMailCodeをチェックして分岐させる
+ </summary>
+</member>
+<member name="M:MailSendBatch.MailSendBatch.SendCompCarfareMail">
+ <summary>
+ 記載完了報告処理
+     ターゲット:T_Carfare/Status = 2
+ </summary>
+</member>
+<member name="M:MailSendBatch.MailSendBatch.MailDescription(System.Int32)">
+ <summary>
+ 交通費記載依頼メール送信
+ </summary>
+</member>
+<member name="T:MailSendBatch.My.Resources.Resources">
+<summary>
+  ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.ResourceManager">
+<summary>
+  このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.Culture">
+<summary>
+  厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+  現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.CheckLastMail">
+<summary>
+  
+declare @MailCount int
+declare @CompCount int
+
+BEGIN TRY
+BEGIN tran
+
+	SELECT @MailCount = CarfareCount FROM S_LastBusinessDay
+	WHERE LastBusinessDayID = @LastBusinessDayID
+
+	SELECT @CompCount = COUNT(*) FROM T_Carfare
+	WHERE LastBusinessDayID = @LastBusinessDayID
+	 AND Status = @cStatus
+
+	if @MailCount = @CompCount
+	begin
+		UPDATE S_LastBusinessDay SET Status = @lStatus
+		WHERE LastBusinessDayID = @LastBusinessDayID
+	end
+
+BEGIN CATCH
+
+    declare @ErrorMessage nvarchar(4000)
+    decl [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.MailCompletion_1">
+<summary>
+  [自動送信メール]
+
+　{0} の{1}月分交通費記載があります。
+
+　交通費ファイルの確認をお願いします。
+
+
+以上
+
+-- 
+--------------------------------
+こちらは自動送信メールとなります。
+本メールへ返信はしないでください。
+--------------------------------  に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.MailCompletion_2">
+<summary>
+  [自動送信メール]
+
+　{0} の{1}月分交通費記載はありません。
+
+
+以上
+
+-- 
+--------------------------------
+こちらは自動送信メールとなります。
+本メールへ返信はしないでください。
+--------------------------------  に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.MailDescription">
+<summary>
+  [自動送信メール]
+
+ 今月の交通費記載をお願いします。
+
+ *長距離出張の際の飛行機代・新幹線代は記載しないでください
+  また、出張先での極地交通費(JR私鉄各線・バス・タクシー利用等)は記載し
+  てください
+
+交通費の記載が完了したら下記URLをクリックしてください。
+
+　http://{0}:{1}/{2}/success_carfare.aspx?key={3}
+
+以上
+
+-- 
+-------------------------------------------
+こちらは自動送信メールとなります。
+本メールへ返信はしないでください。
+------------------------------------------- に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.MailDescriptionAdmin">
+<summary>
+  [自動送信メール]
+
+ 今月の交通費記載をお願いします。
+
+ *長距離出張の際の飛行機代・新幹線代は記載しないでください
+  また、出張先での極地交通費(JR私鉄各線・バス・タクシー利用等)は記載し
+  てください
+
+
+以上
+
+-- 
+-------------------------------------------
+こちらは自動送信メールとなります。
+本メールへ返信はしないでください。
+------------------------------------------- に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.MailReminder">
+<summary>
+  [自動送信メール]
+
+ 交通費記載をお願いします。
+
+ 記載が完了、もしくはすでに記載済みでしたら下記URLをクリックしてください。
+
+　http://{0}:{1}/{2}/success_carfare.aspx?key={3}
+
+
+以上
+
+-- 
+-------------------------------------------
+こちらは自動送信メールとなります。
+本メールへ返信はしないでください。
+------------------------------------------- に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="P:MailSendBatch.My.Resources.Resources.MailReminderReport">
+<summary>
+  [自動送信メール]
+
+　交通費記載が完了していない社員は下記になります。
+
+{0}
+
+以上
+
+-- 
+-------------------------------------------
+こちらは自動送信メールとなります。
+本メールへ返信はしないでください。
+------------------------------------------- に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="T:MailSendBatch.LogWrite">
+ <summary>
+ イベントログへの書き込み
+ </summary>
+</member>
+<member name="M:MailSendBatch.ServerDirectorySearch.isSearchFile">
+ <summary>
+ サーバーのファイル検索
+ </summary>
+ <returns>ファイルあり：1, ファイルなし：2, 異常終了：-1</returns>
+</member>
+<member name="M:MailSendBatch.ServerDirectorySearch.DirectorySeach">
+ <summary>
+ ファイルサーチ
+ </summary>
+ <returns>ファイルあり：1, ファイルなし：2, 異常終了：-1</returns>
+</member>
+</members>
+</doc>

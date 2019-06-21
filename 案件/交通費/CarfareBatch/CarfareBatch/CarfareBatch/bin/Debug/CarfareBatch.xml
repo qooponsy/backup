@@ -1,0 +1,161 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+CarfareBatch
+</name>
+</assembly>
+<members>
+<member name="M:CarfareBatch.CarfareDB.GetWorkerList(System.Collections.Generic.List{CarfareBatch.WorkerData}@)">
+ <summary>
+ 社員データ取得（交通費記載確認用のために現社員のみ取得）
+ </summary>
+ <param name="Workerlist">社員情報を保持するリスト</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.GetAddress(System.String@)">
+ <summary>
+ 社員アドレス取得　※使用しない
+ </summary>
+ <param name="WorkerID">社員ID</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.GetLastBusinessDay(System.String,CarfareBatch.LastBusinessDay@)">
+ <summary>
+ 最終営業日取得
+ </summary>
+ <param name="LastDay">最終営業日</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.InsertCarfareData(CarfareBatch.WorkerData@,System.Int32@,System.Int32@)">
+ <summary>
+ 交通費記載確認用データ登録　※使用しない
+ </summary>
+ <param name="Worker">社員情報</param>
+ <param name="CarfareID">交通費ID</param>
+ <param name="count">登録件数確認用</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.InsertSessionKey(System.Int32,System.String)">
+ <summary>
+ セッションキー登録   ※使用しない
+ </summary>
+ <param name="CarfareID">交通費ID</param>
+ <param name="SessionKey">セッションキー</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.InsertCarfareMailData(System.DateTime,System.Int32)">
+ <summary>
+ 一括メールデータ登録(交通費記載依頼メール用)
+ </summary>
+ <param name="Today">本日の日付</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.InsertCarfareMailData_n(System.DateTime)">
+ <summary>
+ 一括メールデータ登録(未記載報告メール用)
+ </summary>
+ <param name="Today">本日の日付</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.GetWriteStatus(System.Collections.Generic.List{CarfareBatch.WorkerData}@)">
+ <summary>
+     交通費記載ステータス取得(交通費未記載の人のみ)
+ </summary>
+ <param name="Workerlist">社員情報</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.CarfareDB.InsertCarfareData_SessionKey(CarfareBatch.WorkerData@,System.Int32,System.String,System.DateTime)">
+ <summary>
+ 交通費記載確認用データ・セッションキー登録
+ トランザクション処理のため、個別の関数を統合。
+ </summary>
+ <param name="Worker">社員情報</param>
+ <param name="SessionKey">セッションキー</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.clsSessionKey.CreateSession(System.String)">
+ <summary>
+ ハッシュ値を32文字で生成
+ base = (ユーザーフォルダ名)_yyyyMM
+ </summary>
+ <param name="base">SHA256ハッシュ値の変換値</param>
+ <returns></returns>
+</member>
+<member name="M:CarfareBatch.clsSessionKey.ConvSHA256(System.String)">
+ <summary>
+ SHA256ハッシュでセッションキー作成
+ </summary>
+ <param name="base">ハッシュ元の文字列</param>
+ <returns>SHA256ハッシュ値の変換値</returns>
+</member>
+<member name="T:CarfareBatch.My.Resources.Resources">
+<summary>
+  ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
+</summary>
+</member>
+<member name="P:CarfareBatch.My.Resources.Resources.ResourceManager">
+<summary>
+  このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
+</summary>
+</member>
+<member name="P:CarfareBatch.My.Resources.Resources.Culture">
+<summary>
+  厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+  現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
+</summary>
+</member>
+<member name="P:CarfareBatch.My.Resources.Resources.BulkMailInsert">
+<summary>
+   に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="P:CarfareBatch.My.Resources.Resources.CarfareInsert">
+<summary>
+  
+declare @seq int
+
+BEGIN TRY
+BEGIN tran
+
+INSERT INTO [T_Carfare] VALUES(
+SYSDATETIME()
+, &apos;9999&apos;
+, SYSDATETIME()
+, &apos;9999&apos;
+, @WorkerID
+, @LastBusinessDayID
+, @Year
+, @Month
+, @Status
+, @WriteStatus);
+
+SELECT @seq = SCOPE_IDENTITY()
+
+INSERT INTO [S_Session] VALUES(
+SYSDATETIME()
+, &apos;9999&apos;
+, SYSDATETIME()
+, &apos;9999&apos;
+, @SessionKey
+, @seq)
+
+COMMIT tran
+END TRY
+
+BEGIN CATCH
+
+    declare @ErrorMessage nvarchar(4000)
+    declare @ErrorSeverity int
+    declare @ErrorState int
+
+    SE [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+<member name="T:CarfareBatch.LogWrite">
+ <summary>
+ イベントログへの書き込み
+ </summary>
+</member>
+</members>
+</doc>

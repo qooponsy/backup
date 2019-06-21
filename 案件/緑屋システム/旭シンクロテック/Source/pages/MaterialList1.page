@@ -1,0 +1,707 @@
+<apex:page title="資材一覧①" controller="MaterialController" action="{!checkRedirect}" standardStylesheets="false" showHeader="false">
+<head>
+    <c:MaterialHtmlHead />
+</head>
+<body>
+    <!--ヘッダ-->
+    <c:MaterialListHeader />
+    <apex:form >
+    <apex:actionFunction name="transition1" action="{!transition1}"/><!--資材選択1へ-->
+    <apex:actionFunction name="transition4" action="{!transition4}"/><!--資材選択4へ-->
+    <apex:actionFunction name="transitionList1Next" action="{!transitionList1Next}"/><!--資材一覧2へ-->
+    <apex:actionFunction name="transitionToList1" action="{!transitionToList1}"/><!--資材一覧1へ-->
+    <apex:inputText value="{!ConstructionNumber}" style="display:none" /><!--工事番号-->
+    <apex:inputText value="{!Procurementnumber}" style="display:none" /><!--調達番号-->
+    <apex:inputText value="{!division}" style="display:none" /><!--区分-->
+    <apex:inputText value="{!ConstructionName}" styleClass="" style="display:none"/><!--工事名-->
+    <apex:inputText value="{!ConstructionRecordTypeId}" styleClass="" style="display:none"/><!--工事番号レコードタイプ-->
+    <div class="container">
+        <div class="container">
+            <div class="btn btn-primary bulk">一括入力</div>
+            <div class="btn btn-primary delete" style="float:right">削除</div>
+        </div>
+        <div style="overflow-y:scroll;height:300px;margin-top:10px"><!--スクロールエリアここから-->
+            <table class="table table-bordered">
+                <tr class="btn-primary-color">
+                    <th style="text-align:center"><input class="allcheck" type="checkbox"/></th>
+                    <th style="text-align:center">資材一覧</th>
+                </tr>
+
+                <apex:repeat value="{!List1InputMap}" var="InputMap"><!--「入力中」_2の繰り返し-->
+                <apex:repeat value="{!InputMap}" var="Input">
+                    <tr>
+                        <td style="text-align:center;vertical-align:middle"><apex:inputCheckbox styleClass="check" value="{!List1InputMap[InputMap]['Check']}" /><input class="id" value="{!List1InputMap[InputMap]['Id']}" hidden="true" /><input class="itemId" value="{!List1InputMap[InputMap]['ItemNameC']}" hidden="true" /></td>
+                        <td style="list-style:none">
+                            <li>
+                                <label style="font-weight:400;width:30%">ステータス：</label>
+                                入力中
+                                <div style="float:right">数量：{!List1InputMap[InputMap]['QuantityC']}{!List1InputMap[InputMap]['QuantityUnitC']}</div>
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">資材名：</label>
+                                {!List1InputMap[InputMap]['ItemNameR']}
+                                <apex:commandLink action="{!transitionList1Edit}" value="編集" styleClass="btn btn-info btn-xs edit" style="float:right;margin-top:3px;background-color:#11b0e5">
+                                    <apex:param value="{!List1InputMap[InputMap]['ItemNameC']}" name="MaterialId" /><!--資材マスタのId-->
+                                    <apex:param value="{!List1InputMap[InputMap]['Id']}" name="Id" /><!--Id-->
+                                    <apex:param value="{!List1InputMap[InputMap]['QuantityC']}" name="volume" />
+                                    <apex:param value="{!List1InputMap[InputMap]['ProcurementRequestRemarksC']}" name="note" />
+                                    <apex:param value="{!List1InputMap[InputMap]['ProcurementRequestNumberC']}" name="ProcurementRequestNumber" />
+                                </apex:commandLink>
+                                <div style="clear:both;"></div>
+                            </li><hr style="margin-top:5px;margin-bottom:5px" />
+                                <label style="font-weight:400;width:30%">仕入先：</label>
+                                <apex:inputText value="{!List1InputMap[InputMap]['VendorR']}" styleClass="value_{!List1InputMap[InputMap]['ProcurementRequestNumberC']} conceal vendor" style="width:50%;border:1px solid #ccc;background-color: #eee;" /><apex:outputPanel layout="none" rendered="{!division=='B材（小口）'}">  <button type="button" onclick="searchs('{!List1InputMap[InputMap]['ProcurementRequestNumberC']}','{!List1InputMap[InputMap]['ItemNameC']}');" class="btn btn-primary btn-sm mdl" disabled="true"><span class="glyphicon glyphicon-search" aria-hidden="true" /></button></apex:outputPanel>
+                                <apex:inputText value="{!List1InputMap[InputMap]['VendorC']}" styleClass="id_{!List1InputMap[InputMap]['ProcurementRequestNumberC']}" style="display:none"/><!--JSイベントのターゲットとして調達番号を指定-->
+                            <li>
+                                <label style="font-weight:400;width:30%">納入先：</label>
+                                <apex:inputText value="{!List1InputMap[InputMap]['DeliveryPlaceR']}" styleClass="valueN_{!List1InputMap[InputMap]['ProcurementRequestNumberC']} conceal" style="width:50%;border:1px solid #ccc;background-color:#eee;"/>  <button type="button" onclick="searchn('{!List1InputMap[InputMap]['ProcurementRequestNumberC']}');" class="btn btn-primary btn-sm mdl" data-toggle="modal" data-target="#searchn" disabled="true"><span class="glyphicon glyphicon-search" aria-hidden="true" /></button>
+                                <apex:inputText value="{!List1InputMap[InputMap]['DeliveryPlaceC']}" styleClass="idN_{!List1InputMap[InputMap]['ProcurementRequestNumberC']}" style="display:none"/><!--JSイベントのターゲットとして調達番号を指定-->
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">希望納期：</label>
+                                    <div class="input-group date datetgt" data-date="" data-date-format="yyyy/mm/dd" style="padding: 0px!important;width: 50%;margin: 0px;display: inline-block;border-collapse: unset;">
+                                        <apex:inputText value="{!List1InputMap[InputMap]['DesiredDeliveryDateC']}" styleClass="form-control" style="width: 62%;padding: 0px !important;height: 28px;border-radius: 0px;margin-left: 4px;" />
+                                        <span class="input-group-addon" style="width: 27px;"><span class="add-on glyphicon glyphicon-th"></span></span>
+                                    </div>
+                                    <apex:selectList value="{!List1InputMap[InputMap]['AmPm']}" size="1" style="background-color:#eee"><!--AM/PMが入るMapの変数-->
+                                        <apex:selectOptions value="{!List1AmPmList}" /><!--AM/PMだけのリスト-->
+                                    </apex:selectList>
+                            </li>
+                        </td>
+                    </tr>
+                </apex:repeat>
+                </apex:repeat><!--「入力中」_2の繰り返し ここまで-->
+
+                <!--「調達依頼中」の繰り返し-->
+                <!--「調達依頼中」は非表示-->
+                <!-- <apex:repeat value="{!List1ProcurementList}" var="Procurement">
+                    <tr>
+                        <td style="text-align:center;vertical-align:middle"><input class="check" type="checkbox" disabled="true"/></td>
+                        <td style="list-style:none">
+                            <li>
+                                <label style="font-weight:400;width:30%">ステータス：</label>
+                                調達依頼中
+                                <div style="float:right">数量：{!Procurement.Quantity__c}{!Procurement.QuantityUnit__c}</div><br/>
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">資材名：</label>
+                                {!Procurement.ItemName__r.Name}
+                                <button type="button" class="btn btn-info btn-xs" style="float:right;margin-top:3px;background-color:#11b0e5" disabled="true">編集</button>
+                                <div style="clear:both;"></div>
+                            </li><hr style="margin-top:5px;margin-bottom:5px" />
+                            <li>
+                                <label style="font-weight:400;width:30%">仕入先：</label>
+                                {!Procurement.Vendor__r.Name}
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">納入先：</label>
+                                {!Procurement.DeliveryPlace__r.Name}
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">希望納期：</label>
+                                <apex:outputText value="{0, date, yyyy/MM/dd}">
+                                    <apex:param value="{!Procurement.DesiredDeliveryDate__c}" />
+                                </apex:outputText>  
+                                {!Procurement.AmPm__c}
+                            </li>
+                        </td>
+                    </tr>
+                </apex:repeat> -->
+                <!--「調達依頼中」の繰り返し ここまで-->
+
+                <apex:repeat value="{!List1ConfirmationList}" var="Confirmation"><!--「決裁者確認中」の繰り返し-->
+                    <tr>
+                        <td style="text-align:center;vertical-align:middle"><input class="check" type="checkbox" disabled="true"/></td>
+                        <td style="list-style:none">
+                            <li>
+                                <label style="font-weight:400;width:30%">ステータス：</label>
+                                決裁者確認中
+                                <div style="float:right">数量：{!Confirmation.Quantity__c}{!Confirmation.QuantityUnit__c}</div><br/>
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">資材名：</label>
+                                {!Confirmation.ItemName__r.Name}
+                                <button type="button" class="btn btn-info btn-xs" style="float:right;margin-top:3px;background-color:#11b0e5" disabled="true">編集</button>
+                                <div style="clear:both;"></div>
+                            </li><hr style="margin-top:5px;margin-bottom:5px" />
+                            <li>
+                                <label style="font-weight:400;width:30%">仕入先：</label>
+                                {!Confirmation.Vendor__r.Name}
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">納入先：</label>
+                                {!Confirmation.DeliveryPlace__r.Name}
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">希望納期：</label>
+                                <apex:outputText value="{0, date, yyyy/MM/dd}">
+                                    <apex:param value="{!Confirmation.DesiredDeliveryDate__c}" />
+                                </apex:outputText>  
+                                {!Confirmation.AmPm__c}
+                            </li>
+                        </td>
+                    </tr>
+                </apex:repeat><!--「決裁者確認中」の繰り返し ここまで-->
+
+                <apex:repeat value="{!List1RejectionMap}" var="RejectionMap"><!--「却下」の繰り返し-->
+                <apex:repeat value="{!RejectionMap}" var="Rejection">
+                    <tr>
+                        <td style="text-align:center;vertical-align:middle"><apex:inputCheckbox styleClass="check" value="{!List1RejectionMap[RejectionMap]['Check']}" /><input class="id" value="{!List1RejectionMap[RejectionMap]['Id']}" hidden="true" /><input class="itemId" value="{!List1RejectionMap[RejectionMap]['ItemNameC']}" hidden="true" /></td>
+                        <td style="list-style:none">
+                            <li>
+                                <label style="font-weight:400;width:30%">ステータス：</label>
+                                却下
+                                <div style="float:right">数量：{!List1RejectionMap[RejectionMap]['QuantityC']}{!List1RejectionMap[RejectionMap]['QuantityUnitC']}</div>
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">資材名：</label>
+                                {!List1RejectionMap[RejectionMap]['ItemNameR']}
+                                <apex:commandLink action="{!transitionList1Edit}" value="編集" styleClass="btn btn-info btn-xs edit" style="float:right;margin-top:3px;background-color:#11b0e5">
+                                    <apex:param value="{!List1RejectionMap[RejectionMap]['ItemNameC']}" name="MaterialId" /><!--資材マスタのId-->
+                                    <apex:param value="{!List1RejectionMap[RejectionMap]['Id']}" name="Id" /><!--Id-->
+                                    <apex:param value="{!List1RejectionMap[RejectionMap]['QuantityC']}" name="volume" />
+                                    <apex:param value="{!List1RejectionMap[RejectionMap]['ProcurementRequestRemarksC']}" name="note" /><!--ここでエラーが起きる-->
+                                    <apex:param value="{!List1RejectionMap[RejectionMap]['ProcurementRequestNumberC']}" name="ProcurementRequestNumber" />
+                                </apex:commandLink>
+                                <div style="clear:both;"></div>
+                            </li><hr style="margin-top:5px;margin-bottom:5px" />
+                                <label style="font-weight:400;width:30%">仕入先：</label>
+                                <apex:inputText value="{!List1RejectionMap[RejectionMap]['VendorR']}" styleClass="value_{!List1RejectionMap[RejectionMap]['ProcurementRequestNumberC']} conceal vendor" style="width:50%;border:1px solid #ccc;background-color: #eee;" />  <button type="button" onclick="searchs('{!List1RejectionMap[RejectionMap]['ProcurementRequestNumberC']}','{!List1RejectionMap[RejectionMap]['ItemNameC']}');" class="btn btn-primary btn-sm mdl" disabled="true"><span class="glyphicon glyphicon-search" aria-hidden="true" /></button>
+                                <apex:inputText value="{!List1RejectionMap[RejectionMap]['VendorC']}" styleClass="id_{!List1RejectionMap[RejectionMap]['ProcurementRequestNumberC']}" style="display:none"/><!--JSイベントのターゲットとして調達番号を指定-->
+                            <li>
+                                <label style="font-weight:400;width:30%">納入先：</label>
+                                <apex:inputText value="{!List1RejectionMap[RejectionMap]['DeliveryPlaceR']}" styleClass="valueN_{!List1RejectionMap[RejectionMap]['ProcurementRequestNumberC']} conceal" style="width:50%;border:1px solid #ccc;background-color:#eee;"/>  <button type="button" onclick="searchn('{!List1RejectionMap[RejectionMap]['ProcurementRequestNumberC']}');" class="btn btn-primary btn-sm mdl" data-toggle="modal" data-target="#searchn" disabled="true"><span class="glyphicon glyphicon-search" aria-hidden="true" /></button>
+                                <apex:inputText value="{!List1RejectionMap[RejectionMap]['DeliveryPlaceC']}" styleClass="idN_{!List1RejectionMap[RejectionMap]['ProcurementRequestNumberC']}" style="display:none"/><!--JSイベントのターゲットとして調達番号を指定-->
+                            </li>
+                            <li>
+                                <label style="font-weight:400;width:30%">希望納期：</label>
+                                    <div class="input-group date datetgt" data-date="" data-date-format="yyyy/mm/dd" style="padding: 0px!important;width: 50%;margin: 0px;display: inline-block;border-collapse: unset;">
+                                        <apex:inputText value="{!List1RejectionMap[RejectionMap]['DesiredDeliveryDateC']}" styleClass="form-control" style="width: 62%;padding: 0px !important;height: 28px;border-radius: 0px;margin-left: 4px;" />
+                                        <span class="input-group-addon" style="width: 27px;"><span class="add-on glyphicon glyphicon-th"></span></span>
+                                    </div>
+                                    <apex:selectList value="{!List1RejectionMap[RejectionMap]['AmPm']}" size="1" style="background-color:#eee"><!--AM/PMが入るMapの変数-->
+                                        <apex:selectOptions value="{!List1AmPmList}" /><!--AM/PMだけのリスト-->
+                                    </apex:selectList>
+                            </li>
+                        </td>
+                    </tr>
+                </apex:repeat>
+                </apex:repeat><!--「却下」の繰り返し ここまで-->
+
+            </table>
+        </div><!--スクロールエリアここまで-->
+    </div>
+    <div class="container" style="margin-top:10px">
+        <!-- <apex:commandLink action="{!transitionList1Next}" value="申請内容確認" styleClass="btn btn-primary" style="float:right" /> -->
+        <apex:outputPanel layout="none" rendered="{!division=='B材（小口）'}">
+            <div id="app_confirm" class="btn btn-primary" style="float:right">申請内容確認</div>
+        </apex:outputPanel>
+        <apex:outputPanel layout="none" rendered="{!division=='B材（大口）'}">
+            <div id="app_confirm" class="btn btn-primary" style="float:right">更新内容確認</div>
+        </apex:outputPanel>
+    </div>
+    <!--モーダル/一括入力-->
+    <div class="modal fade" id="bulk" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" style="list-style:none">
+                    <li>
+                        <label style="font-weight:400;width:30%">仕入先：</label>
+                        <select class="account" style="width:50%">
+                        </select>
+                    </li>
+                        <label style="font-weight:400;width:30%">納入先：</label>
+                        <select class="place" style="width:50%">
+                        </select>
+                    <li>
+                        <label style="font-weight:400;width:30%">希望納期：</label>
+                        <!-- <input class="Ddate" type="date" style="width:50%" /> -->
+                        <div class="input-group date datetgt" data-date="" data-date-format="yyyy/mm/dd" style="padding: 0px!important;width: 50%;margin: 0px;display: inline-flex;border-collapse: unset;">
+                            <input type="text" class="form-control Ddate" style="width: 62%;padding: 0px !important;height: 28px;border-radius: 0px;margin-left: 4px;border:1px solid #ccc;background-color: #eee" />
+                            <!-- <apex:inputText value="{!List1InputMap[InputMap]['DesiredDeliveryDateC']}" styleClass="form-control" style="width: 62%;padding: 0px !important;height: 28px;border-radius: 0px;margin-left: 4px;" /> -->
+                            <span class="input-group-addon" style="width: 40px;"><span class="add-on glyphicon glyphicon-th"></span></span>
+                        </div>
+                    </li>
+                    <div style="text-align:center;margin-top:10px">
+                        <div class="btn btn-primary mclose">戻る</div>
+                        <div id="do_bulk" class="btn btn-info" style="margin-left:10px;background-color:#11b0e5">OK</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!--モーダル/一括入力　ここまで-->
+    <!--モーダル/削除-->
+    <div class="modal fade" id="delete" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align:center">
+                    削除します。<br/>よろしいですか？<br/><br/>
+                    <div id="do_delete" class="btn btn-primary">はい</div><br/><br/>
+                    <div class="btn btn-primary mclose">いいえ</div>
+                </div>
+            </div>
+        </div>
+    </div><!--モーダル/削除　ここまで-->
+    <!--モーダル/検索・仕入先-->
+    <div class="modal fade" id="searchs" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align:center">
+                    <!--modal body-->
+                    仕入れ先選択<br/>
+                    <table class="table table-bordered" style="text-align:left">
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div><!--モーダル/検索・仕入先　ここまで-->
+    <!--モーダル/検索・納入先-->
+    <div class="modal fade" id="searchn" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align:center">
+                    <!--modal body-->
+                    納入先選択<br/>
+                    <table class="table table-bordered" style="text-align:left">
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div><!--モーダル/検索・納入先　ここまで-->        
+    
+</apex:form>
+</body>
+<script>
+$(document).ready(function () {
+    //一括入力のdatepickerセットアップ
+    var $bulkTarget = $("#bulk").find(".datetgt");
+    switchDatepicker($bulkTarget,true);
+
+    //入力不可項目の初期セットアップ ※apexタグにてdisableにするとPOSTの対象から外れるため
+    $('div.date').find('input').attr('readonly',true);
+    $('input.conceal').attr('readonly',true);
+    if('{!division}' == 'B材（大口）') {
+        $('input.vendor').css("background", "silver");
+    }
+
+    // チェックボックスの有無による有効無効を制御
+    InitCheckBoxRow();
+
+    //モーダル閉じる
+    $('div.mclose').click(function(){
+        //$(this).parent('div.modal').modal('hide');
+        $('#delete').modal('hide');
+        $('#bulk').modal('hide');
+    });
+    //削除ボタンイベント
+    $('div.delete').click(function(){
+        //チェックの入っているチェックボックスを取得
+        var $cktgt = $(document).find('input.check:checked');
+        if($cktgt.length > 0){
+            //モーダルを出現させる
+            $('#delete').modal('show');
+        }else{
+            //アラートによるエラーを表示
+            customAlert('選択されている項目がありません。\n削除する項目にチェックを入れてください。');
+        }
+    });
+    //削除実行ボタンイベント
+    $('#do_delete').click(function(){
+        changeLoading(true);
+        //選択されているチェックボックスの一覧を取得 | 直前のイベントでチェックしているため1件以上存在する前提
+        var $ckList = $(document).find('input.check:checked');
+        //foreachを回し、その欄のIDをリストに入れる＝削除IDリストの作成
+        var delList = [];
+        for(i = 0; i < $ckList.length; i++){
+            delList[i] = $ckList.eq(i).siblings('input.id').val();
+        }
+        //Ajaxにて削除実行(返り値はbool)
+        {!$RemoteAction.MaterialController.List1ProcurementRequestDelete}(
+            delList,   // 渡すパラメータ
+            function(result, event){    // コールバック関数
+                if(event.status) { //通信の成功チェック
+                    //ifにて削除が成功したら画面遷移(List1)、失敗ならエラーをアラートで表示
+                    if (result){ //削除処理が成功したか受け取る
+                        //成功時処理
+                        transitionToList1();
+                    }else{
+                        changeLoading(false);
+                        customAlert('削除処理に失敗しました');
+                    }
+                }
+                else{
+                    changeLoading(false);
+                    customAlert("システムエラー");
+                }
+            }
+        );
+    });
+    //一括入力ボタンイベント
+    $('div.bulk').click(function(){
+        changeLoading(true);
+        //チェックの入っているチェックボックスを取得
+        var $cktgt = $(document).find('input.check:checked');
+        if($cktgt.length > 0){
+            // Ajax処理
+            var $mdlid = $('#bulk');
+            {!$RemoteAction.MaterialController.SearchBulkDataList}(
+            '{!ConstructionNumber}','{!division}',  // 渡すパラメータ
+            function(result, event){    // コールバック関数
+                if(event.status) {
+                    if (result != null){ //オブジェクトのListを受け取る
+                        //結果を受け取ってモーダルを更新生成
+                        var $atgt = $mdlid.find('.account');
+                        var $ptgt = $mdlid.find('.place');
+                        //モーダルの中身をリセット
+                        $atgt.empty();
+                        $ptgt.empty();
+                        //帰ってきた結果を回してtr行を作成する
+                        var accountList = result['account'];
+                        var placeList = result['place'];
+                        
+                        // 大口の場合は仕入先の入力不可
+                        if(accountList != null) {
+                            accountList.forEach(function(val, index, ar){
+                                $option = $('<option>')
+                                    .val(val['Account__c'])
+                                    .text(val['Name']);
+                                    $atgt.append($option);
+                            })
+                        } else {
+                            $atgt.prop('disabled', true);
+                            $atgt.css("background", "silver");
+                        }
+
+                        placeList.forEach(function(val, index, ar){
+                            $option = $('<option>')
+                                .val(val['Place__c'])
+                                .text(val['Name']);
+                                $ptgt.append($option);
+                        })
+
+                        //モーダルを表示
+                        changeLoading(false);
+                        $('#bulk').modal('show');
+                    }else{
+                        changeLoading(false);
+                        customAlert('システムエラー');
+                    }
+                }
+                else{
+                    changeLoading(false);
+                    customAlert("システムエラー");
+                }
+            });
+
+        }else{
+            //アラートによるエラーを表示
+            customAlert('選択されている項目がありません。\n更新する項目にチェックを入れてください。');
+            changeLoading(false);
+        }
+    });
+    //一括入力実行イベント
+    $('#do_bulk').click(function(){
+        changeLoading(true);
+        //入力項目の値を取得
+        var vendor = $(this).parents('div.modal-body').find('select.account').val();
+        var vendorName = $(this).parents('div.modal-body').find('select.account > option:selected').text();
+        var deliveryPlace = $(this).parents('div.modal-body').find('select.place').val();
+        var deliveryPlaceName = $(this).parents('div.modal-body').find('select.place > option:selected').text();
+        // var desiredDeliveryDate = ($(this).parents('div.modal-body').find('input.Ddate').val()).replace(/-/g, '/'); //ハイフンからスラッシュへ置換
+        var desiredDeliveryDate = $(this).parents('div.modal-body').find('input.Ddate').val(); //ハイフンからスラッシュへ置換
+        //チェックボックスが入っている項目の取得
+        var $cktgt = $(document).find('input.check:checked');
+        //チェックされている項目でfor | チェックして値を当てはめる
+        for(i = 0; i < $cktgt.length; i++){
+            //for内部のチェックボックス
+            var $tgt = $cktgt.eq(i);
+            //仕入先処理ここから
+            if(vendor != ''){
+                //対象行の資材IDを取得
+                var itemId = $tgt.siblings('input.itemId').val();
+                var PRId = $tgt.siblings('input.id').val();
+                var a = 1;
+                //ajax処理
+                {!$RemoteAction.MaterialController.CheckBulkVendorData}(
+                    PRId, itemId, vendor,   // 渡すパラメータ
+                    function(result, event){    // コールバック関数
+                        if(event.status) {
+                            if (result['check'] == 'true'){ //boolを受け取り | trueだったら値を入れる
+                                //仕入れ先の値を入れる処理
+                                var tgtId = result['ProcurementRequestNumber'];
+                                $(document).find('input[value=' + tgtId + ']').parents('tr').find('input[class^=value_]').val(vendorName);
+                                $(document).find('input[value=' + tgtId + ']').parents('tr').find('input[class^=id_]').val(vendor);
+                            }else{
+                                //値は入れない
+                            }
+                        }else{
+                            //通信に失敗
+                            customAlert("システムエラー");
+                        }
+                    }
+                );//ajaxここまで
+            }//仕入先処理ここまで
+            if(deliveryPlace != ''){ //納入先の処理ここから
+                $tgt.parents('tr').find('input[class^=valueN_]').val(deliveryPlaceName);
+                $tgt.parents('tr').find('input[class^=idN_]').val(deliveryPlace);
+            }//納入先の処理ここまで
+            if(desiredDeliveryDate != ''){ //希望納期の処理ここから
+                $tgt.parents('tr').find('input[class=form-control]').val(desiredDeliveryDate);
+            }//希望納期の処理ここまで
+        }
+        //モーダルを消す
+        changeLoading(false);
+        $('#bulk').modal('hide');
+    });
+    //申請内容確認イベント
+    $('#app_confirm').click(function(){
+        changeLoading(true);
+        //チェックの入っているチェックボックスを取得
+        var $cktgt = $(document).find('input.check:checked');
+        if($cktgt.length > 0){
+            //B材、チェックされている項目の値を連想配列に入れてAjaxで送り、必須項目チェック
+            var mateb = "{!division}";
+            var validItems = {};
+            for(i = 0; i < $cktgt.length; i++){
+                var tmpMap = {};
+                var id = $cktgt.eq(i).siblings('input.id').val(); //ID取得
+                tmpMap['Vendor'] = $cktgt.eq(i).parent('td').siblings('td').find('input[class^=value_]').val(); //仕入先
+                tmpMap['DeliveryPlace'] = $cktgt.eq(i).parent('td').siblings('td').find('input[class^=valueN_]').val(); //納入先
+                tmpMap['DesiredDeliveryDate'] = $cktgt.eq(i).parent('td').siblings('td').find('input[class=form-control]').val(); //希望納期
+                validItems[id] = tmpMap;
+            }
+            {!$RemoteAction.MaterialController.CheckList1}(
+                mateb, validItems,   // 渡すパラメータ
+                function(result, event){    // コールバック関数
+                    if(event.status) { //通信の成功チェック
+                        if (result == null || result == ''){ //エラーメッセージを受け取る
+                            //エラーがない場合はそのまま一覧2画面に遷移
+                            transitionList1Next();
+                        }else{
+                            changeLoading(false);
+                            customAlert(result);
+                        }
+                    }
+                    else{
+                        changeLoading(false);
+                        customAlert("システムエラー");
+                    }
+                }
+            );
+        }else{
+            changeLoading(false);
+            //アラートによるエラーを表示
+            customAlert('選択されている項目がありません。\n申請確認する項目にチェックを入れてください。');
+        }
+    });
+
+    //チェックボックスイベント
+    $('input.check').on('change',function(){
+        var $tgt = $(this);
+        changeCheckbox($tgt);
+    });
+    $('input.allcheck').click(function(){
+        //チェックボックスの状態を見る
+        var status = $(this).prop("checked");
+        var $target = $(document).find('input.check:enabled');
+        if (status){
+            $target.prop('checked', true);
+        }else{
+            $target.prop('checked', false);
+        }
+        //変更したチェックボックスの行に対して変更を加える
+        $target.each(function(i, val){
+            changeCheckbox($(val));
+        });
+    });
+    //モーダル参照イベント
+    $("td.tgt-s").click(function(){
+        //モーダル閉じる
+        $('#searchs').modal('hide');
+        //文字の配置
+        var txt = $(this).children('label').text();
+        $('#tgt_input_s').val(txt);
+    });
+    $("td.tgt-n").click(function(){
+        //モーダル閉じる
+        $('#searchn').modal('hide');
+        //文字の配置
+        var txt = $(this).children('label').text();
+        $('#tgt_input_n').val(txt);
+    });
+    //ページ遷移用イベント
+    $('button.edit').click(function(){
+        transition4(); //資材選択4へ
+    });
+    $('#confirm').click(function(){
+        transitionList2(); //資材一覧2へ
+    });
+
+    //仕入れ先選択イベント
+    //※on clickにしないと追加した要素に対してイベントが起きない
+    $(document).on("click",'td.value_s', function(){
+        //押下箇所の値を取得
+        var value = $(this).children('label').text();
+        var id = $(this).siblings('td.name_s').children('label').text();
+        //nameに格納しているターゲットの情報を取得
+        var tgt_value = $(this).attr('name');
+        var tgt_id = $(this).siblings('td.name_s').attr('name');
+        //値をターゲットのvalueに入れる
+        $('input.' + tgt_value).val(value);
+        $('input.' + tgt_id).val(id);
+        //モーダルを消す
+        $('#searchs').modal('hide');
+    })
+    //納入先選択イベント
+    //※on clickにしないと追加した要素に対してイベントが起きない
+    $(document).on("click",'td.value_n', function(){
+        //押下箇所の値を取得
+        var value = $(this).children('label').text();
+        var id = $(this).siblings('td.name_n').children('label').text();
+        //nameに格納しているターゲットの情報を取得
+        var tgt_value = $(this).attr('name');
+        var tgt_id = $(this).siblings('td.name_n').attr('name');
+        //値をターゲットのvalueに入れる
+        $('input.' + tgt_value).val(value);
+        $('input.' + tgt_id).val(id);
+        //モーダルを消す
+        $('#searchn').modal('hide');
+    })
+
+});
+
+    // 
+    function InitCheckBoxRow() {
+        var status = $(this).prop("checked");
+        var $target = $(document).find('input.check:enabled');
+        //変更したチェックボックスの行に対して変更を加える
+        $target.each(function(i, val){
+            changeCheckbox($(val));
+        });
+    }
+
+    //チェックボックス変更時の関数
+    function changeCheckbox($target) {
+        //チェックボックスの状態を見る
+        var status = $target.prop("checked");
+        //モーダルボタンの切り替え
+        var $changeTarget = $target.parent('td').siblings('td').find('button.mdl');
+        if (status) {
+            $changeTarget.prop('disabled', false);
+        }else{
+            $changeTarget.prop('disabled', true);
+        }
+        //日付項目の切り替え
+        var $dateTarget = $target.parent('td').siblings('td').find('input[type=date]');
+        if (status) {
+            $dateTarget.prop('disabled', false);
+        }else{
+            $dateTarget.prop('disabled', true);
+        }
+        //AM/PM選択リストの切り替え
+        var $AmPmTarget = $target.parent('td').siblings('td').find('select');
+        if (status) {
+            //オフ
+            $AmPmTarget.prop('disabled', false);
+            $AmPmTarget.css('background-color', '');
+        }else{
+            //オン
+            $AmPmTarget.prop('disabled', true);
+            $AmPmTarget.css('background-color', '#eee');
+        }
+        //希望納期datepicker設定切り替え
+        var $dateTarget = $target.parent('td').siblings('td').find('div.datetgt');
+        switchDatepicker($dateTarget,status);
+
+    }
+    //datepicker切り替え
+    function switchDatepicker($dateTarget,switching){
+        if(switching){
+            $dateTarget.datepicker({
+                language: 'ja',
+                autoclose: true
+            });
+        }else{
+            $dateTarget.datepicker("destroy");
+        }
+    }
+
+    //仕入れ先
+    function searchs(tgtId,sId){
+        changeLoading(true);
+        var valueC = 'value_' + tgtId;
+        var idC = 'id_' + tgtId;
+        var test = $('input.' + valueC).val();
+        var test2 = $('input.' + idC).val();
+
+        var tgtName = $(this).parents('td').find('input.value').val();
+        var $mdlid = $('#searchs');
+        //sId = 資材マスタのID
+        {!$RemoteAction.MaterialController.List1SearchVendor}(
+            '{!ConstructionNumber}', sId,   // 渡すパラメータ
+            function(result, event){    // コールバック関数
+                if(event.status) {
+                    if (result != null){ //オブジェクトのListを受け取る
+                        //結果を受け取ってモーダルを更新生成
+                        var $tgt = $mdlid.find('tbody');
+                        //モーダルの中身をリセット
+                        $tgt.empty();
+                        //帰ってきた結果を回してtr行を作成する
+                        result.forEach(function(val, index, ar){
+                            $tgt.append('<tr><td class="btn-default value_s" name="' + valueC + '"><label style="color:#337ab7">' + val['Name'] + '</label></td><td class="btn-default name_s" hidden="true" name="' + idC + '"><label style="color:#337ab7">' + val['Account__c'] + '</label></td></tr>');
+                        })
+                        //モーダルを表示
+                        $('#searchs').modal('show');
+                        changeLoading(false);
+                        // var a = 1;
+                    }else{
+                        changeLoading(false);
+                        customAlert(result);
+                    }
+                }
+                else{
+                    changeLoading(false);
+                    customAlert("システムエラー");
+                }
+            });
+    }
+    //納入先
+    function searchn(tgtId){
+        changeLoading(true);
+        var valueC = 'valueN_' + tgtId;
+        var idC = 'idN_' + tgtId;
+
+        var tgtName = $(this).parents('td').find('input.value').val();
+        var $mdlid = $('#searchn');
+        //sId = 資材マスタのID
+        {!$RemoteAction.MaterialController.List1SearchDeliveryPlace}(
+            '{!ConstructionNumber}',   // 渡すパラメータ
+            function(result, event){    // コールバック関数
+                if(event.status) {
+                    if (result != null){ //オブジェクトのListを受け取る
+                        //結果を受け取ってモーダルを更新生成
+                        var $tgt = $mdlid.find('tbody');
+                        //モーダルの中身をリセット
+                        $tgt.empty();
+                        //帰ってきた結果を回してtr行を作成する
+                        result.forEach(function(val, index, ar){
+                            $tgt.append('<tr><td class="btn-default value_n" name="' + valueC + '"><label style="color:#337ab7">' + val['Name'] + '</label></td><td class="btn-default name_n" hidden="true" name="' + idC + '"><label style="color:#337ab7">' + val['Place__c'] + '</label></td></tr>');
+                        })
+                        //モーダルを表示
+                        $('#searchn').modal('show');
+                        changeLoading(false);
+                    }else{
+                        changeLoading(false);
+                        customAlert(result);
+                    }
+                }
+                else{
+                    changeLoading(false);
+                    customAlert("システムエラー");
+                }
+            });
+    }
+</script>
+</apex:page>

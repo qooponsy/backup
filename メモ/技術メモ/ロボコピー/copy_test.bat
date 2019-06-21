@@ -1,0 +1,8 @@
+@SETLOCAL
+@SET DEPLOY_PATH=copy_test
+@ECHO %DEPLOY_PATH%
+@PAUSE
+ROBOCOPY C:\DevDeploy\%DEPLOY_PATH% \\192.168.47.103\C$\Penguin8\wwwroot\%DEPLOY_PATH% /MIR /LOG+:C:\DevDeploy\deploylog.log
+@PAUSE
+@ENDLOCAL
+EXIT 0

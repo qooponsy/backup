@@ -1,0 +1,50 @@
+﻿
+declare @seq int
+
+BEGIN TRY
+BEGIN tran
+
+INSERT INTO [T_Carfare] VALUES(
+SYSDATETIME()
+, '9999'
+, SYSDATETIME()
+, '9999'
+, @WorkerID
+, @LastBusinessDayID
+, @Year
+, @Month
+, @Status
+, @WriteStatus);
+
+SELECT @seq = SCOPE_IDENTITY()
+
+INSERT INTO [S_Session] VALUES(
+SYSDATETIME()
+, '9999'
+, SYSDATETIME()
+, '9999'
+, @SessionKey
+, @seq)
+
+COMMIT tran
+END TRY
+
+BEGIN CATCH
+
+    declare @ErrorMessage nvarchar(4000)
+    declare @ErrorSeverity int
+    declare @ErrorState int
+
+    SELECT @ErrorMessage = ERROR_MESSAGE(),
+           @ErrorSeverity = ERROR_SEVERITY(),
+           @ErrorState = ERROR_STATE()
+
+	RAISERROR (@ErrorMessage, -- Message text.
+               @ErrorSeverity, -- Severity.
+               @ErrorState -- State.
+               );
+
+
+	ROLLBACK tran
+
+END CATCH

@@ -1,0 +1,667 @@
+//////////////////////////////////////////////////////////////
+//VBAのソースの変更をコミットする際は必ずこのファイルに
+//変更後のソースをコピーして一緒にコミットすること。
+//////////////////////////////////////////////////////////////
+
+
+Option Explicit
+
+Const KOTSUHI_START_ROW As Integer = 4                  '交通費シート:  交通費データ開始行
+Const MEISAI_START_ROW As Integer = 9                   '明細シート:    交通費データ開始行
+Const MEISAI_LEFT_COLUMN As Integer = 1                 '明細シート:    交通費データ開始列(左側)
+Const MEISAI_RIGHT_COLUMN As Integer = 7                '明細シート:    交通費データ開始列(右側)
+Const MEISAI_UPPER_LIMIT As Integer = 46                '明細シート:    一枚の件数上限
+
+Const MAIN_KOTSUHISEISHO_SHEETNAME As String = "交通費清書" '交通費清書シート名
+Const TEMPLATE_MEISAI_SHEETNAME As String = "明細"          '明細テンプレートのシート
+Const MEISAI_SHEETNAME As String = "明細コピー"             '明細のシート名
+Const SEISYO_MEISAI_SHEETNAME As String = "明細"            '清書済み明細シート名
+
+Const KOTSUHI_FILENAME As String = "20*_*_交通費_*.xls" '交通費ファイル名のテンプレート
+Const KOTSUHI_SHEETNAME As String = "交通費"            '交通費ファイルのシート名
+Const SEISYO_FOLDERNAME As String = "清書済み"          '出力先フォルダ名
+
+Const GENGO_HEISEI As String = "平成"                   '元号       ～2019年4月
+Const GENGO_NEWGENGO As String = "令和"                 '新元号     2019年5月～
+Const GENGO_SWITCHING As Date = "05/01/2019"              '元号切り替え日
+
+Const PROTECTION_PASS As String = "fate-i0123"      'シート・ブックの保護用パスワード
+
+
+
+
+'▼交通費シートの各データ開始列
+Enum kotsuhiSheet
+    Day = 2         '日にち
+    Place = 4       '目的地
+    Route = 5       '経路
+    Expenses = 6    '交通費
+End Enum
+
+'▼明細シートの各データ開始列
+Enum meisaiSheet
+    Day = 1             '日にち
+    Place = 2           '場所
+    Start = 3           '出発地
+    Yajirusi = 4        '矢印(→⇔)
+    Goal = 5            '到着地
+    Expenses = 6        '交通費
+    Total = 9           '「合計」
+    TotalExpenses = 12  '総額
+End Enum
+
+
+Sub Seisyo()
+    Dim CurrentWorkbook As Workbook
+    Set CurrentWorkbook = CarfareProject.ThisWorkbook
+
+    Application.ScreenUpdating = False
+    Application.DisplayAlerts = False
+    
+    '処理中のみブックとシートの保護を解除する
+    CurrentWorkbook.Unprotect PROTECTION_PASS
+    Sheets(MAIN_KOTSUHISEISHO_SHEETNAME).Unprotect
+    Sheets(TEMPLATE_MEISAI_SHEETNAME).Unprotect
+        
+    '処理中のみ非表示の「明細」シートを表示
+    Sheets(TEMPLATE_MEISAI_SHEETNAME).Visible = True
+    
+
+    UserForm1.Show vbModeless
+    UserForm1.Repaint
+    
+    '▼For文に使用する変数
+    Dim i As Integer            'For文用
+    Dim dt As Variant           '交通費データのリスト(list)用
+    Dim FileNo As Variant       '交通費ファイルのリスト(FileList)用
+    Dim ws As Worksheet         'ワークシート確認用
+    
+    Dim Success As Boolean  '処理の成功チェック
+    Dim sErrMsg As String   'エラーメッセージ
+    
+    Success = True
+    
+    '▼清書済みフォルダの有無を確認
+    If Success Then
+        Dim objFso As Object
+        Set objFso = CreateObject("Scripting.FileSystemObject")
+
+        If Not (objFso.FolderExists(CurrentWorkbook.Path & "\" & SEISYO_FOLDERNAME)) Then
+            Success = False
+            sErrMsg = "「" & SEISYO_FOLDERNAME & "」フォルダが存在しません。" & vbCrLf & "「" & SEISYO_FOLDERNAME & "」フォルダを作成してから再度清書ボタンを押してください。"
+        End If
+    End If
+    
+    
+    '▼交通費ファイルの有無を確認してリストを作成する
+    If Success Then
+        '交通費ファイルの有無を確認
+        If Dir(CurrentWorkbook.Path & "\" & KOTSUHI_FILENAME) <> "" Then
+            '交通費ファイルのリストを作成する
+            Dim FileList As New Collection
+            Dim sFilename As String
+        
+            sFilename = Dir(CurrentWorkbook.Path & "\" & KOTSUHI_FILENAME)
+            
+            '交通費ファイルのリストを作成する
+            Do Until sFilename = ""
+                With New FileList
+                    .sFilename = sFilename
+                    FileList.Add .Self
+                    sFilename = Dir
+                End With
+            Loop
+        Else
+            Success = False
+            sErrMsg = "同ディレクトリ内に交通費ファイルが存在しません。" & vbCrLf & "処理を中断します。"
+        End If
+    End If
+    
+    '■清書(以下の処理をリストにいるメンバー分繰り返す)■
+    FileNo = 0
+    For Each FileNo In FileList
+    
+        If Success Then
+            '▼処理対象のファイル名を設定
+            Dim sOpenfilename As String
+            sOpenfilename = FileNo.sFilename
+            
+            '▼交通費ファイルが既に開かれていないか確認
+            If isFileOpen(sOpenfilename) Then
+                Success = False
+                sErrMsg = sOpenfilename & "は既に開かれています。閉じてから再度清書ボタンを押してください。"
+            End If
+        End If
+        
+        If Success Then
+            'ファイル名チェック
+            Dim splFileName As Variant
+            splFileName = Split(sOpenfilename, "_")
+            Dim filenameErr As Integer
+            '-フォーマット
+            If (UBound(splFileName) <> 3) Then
+                filenameErr = filenameErr + 1
+            ElseIf (splFileName(2) <> "交通費") Then
+                filenameErr = filenameErr + 1
+            '年
+            ElseIf Len(splFileName(0)) <> LenB(StrConv(splFileName(0), vbFromUnicode)) Then
+                filenameErr = filenameErr + 1
+            ElseIf (Len(splFileName(0)) <> 4) Then
+                filenameErr = filenameErr + 1
+            ElseIf Not (IsNumeric(splFileName(0))) Then
+                filenameErr = filenameErr + 1
+            '月
+            ElseIf Len(splFileName(1)) <> LenB(StrConv(splFileName(1), vbFromUnicode)) Then
+                filenameErr = filenameErr + 1
+            ElseIf (Len(splFileName(1)) > 2) Then
+                filenameErr = filenameErr + 1
+            ElseIf Not (IsNumeric(splFileName(0))) Then
+                filenameErr = filenameErr + 1
+            '名前
+            ElseIf (Replace(splFileName(3), ".xls", "") = "") Then
+                filenameErr = filenameErr + 1
+            End If
+            
+            If (filenameErr > 0) Then
+                Success = False
+                sErrMsg = sOpenfilename & "のファイル名が不正です。" & vbCrLf & "該当の交通費ファイルを修正してから再度清書ボタンを押してください。"
+            End If
+        End If
+        
+        If Success Then
+            '▼交通費ファイルを開く
+            '対象の交通費ファイルを開く
+            Workbooks.Open FileName:=CurrentWorkbook.Path & "\" & sOpenfilename
+        End If
+    
+        '▼交通費シートの有無を確認
+        If Success Then
+            Dim cntKotsuhi As Integer
+            cntKotsuhi = 0
+            '交通費ファイルの数を確認
+            For Each ws In ActiveWorkbook.Worksheets
+                If ws.Name = KOTSUHI_SHEETNAME Then
+                    cntKotsuhi = cntKotsuhi + 1
+                End If
+            Next ws
+            
+            '交通費ファイルが0件の場合処理を中断する
+            If cntKotsuhi = 0 Then
+                Windows(sOpenfilename).Activate
+                ActiveWindow.Close
+                
+                Success = False
+                sErrMsg = sOpenfilename & "に" & KOTSUHI_SHEETNAME & "シートが存在しません｡" & vbCrLf & "処理を中断します。"
+            End If
+        End If
+        
+        '▼交通費ファイルの交通費シートを交通費清書ファイルにコピーする
+        If Success Then
+            '交通費データの件数が1件以上あるか確認
+            Sheets(KOTSUHI_SHEETNAME).Activate
+            If WorksheetFunction.CountA(Range(Cells(KOTSUHI_START_ROW, kotsuhiSheet.Day), Cells(KOTSUHI_START_ROW, kotsuhiSheet.Expenses))) <> 0 Then
+            
+                '交通費シートをコピー
+                Windows(sOpenfilename).Activate
+                Sheets(KOTSUHI_SHEETNAME).Copy After:=CurrentWorkbook.Worksheets(Worksheets.Count)
+
+                '交通費ファイルを閉じる
+                Windows(sOpenfilename).Activate
+                ActiveWindow.Close
+            Else
+                '交通費ファイルを閉じる
+                Windows(sOpenfilename).Activate
+                ActiveWindow.Close
+            
+                Success = False
+                sErrMsg = sOpenfilename & "の交通費データ件数が0件または1行目から記入されておりません。" & vbCrLf & "該当の交通費ファイルを削除してから再度清書ボタンを押してください。"
+                
+                Exit For
+            End If
+        End If
+
+        '▼交通費データの取得
+        If Success Then
+            '交通費データの件数を取得
+            Dim iColumns As Integer         '交通費ファイルのデータ件数
+            Dim iMaxMeisaiPage As Integer   '明細シート数
+            
+            '交通費ファイルのデータ件数を出す
+            iColumns = (Sheets(KOTSUHI_SHEETNAME).Cells(Rows.Count, "B").End(xlUp).Row) - (KOTSUHI_START_ROW - 1)
+                
+            '交通費ファイルのデータ件数から明細シートの数を計算する
+            iMaxMeisaiPage = Int(iColumns / MEISAI_UPPER_LIMIT) + 1
+            
+            '年月日
+            Dim sYear As String
+            Dim sMonth As String
+            Dim sDay As String
+            Dim iWareki As Integer          'sYearを和暦に変換
+            Dim sApplicationDate As String  '和暦年+月+日
+            Dim dDate As Date               '日付をDate型に変換したものを格納
+            
+            splFileName = Split(sOpenfilename, "_") 'ファイル名
+            
+            sYear = StrConv(Int(splFileName(0)), vbNarrow)
+            sMonth = StrConv(Int(splFileName(1)), vbNarrow)
+            sDay = Right((DateSerial(sYear, sMonth + 1, 1) - 1), 2)
+            
+            'ファイル月チェック
+            If sMonth > 12 Then
+                Success = False
+                sErrMsg = sOpenfilename & "のファイル名が不正です。" & vbCrLf & "該当の交通費ファイルを修正してから再度清書ボタンを押してください。"
+                'コピーした交通費シートを削除
+                CurrentWorkbook.Sheets(KOTSUHI_SHEETNAME).Delete
+            End If
+        End If
+            
+        If Success Then
+            dDate = sMonth & "/" & sDay & "/" & sYear
+            '2019/04までは「平成」
+            If (dDate < GENGO_SWITCHING) Then
+                iWareki = sYear - 1988
+                sApplicationDate = GENGO_HEISEI & iWareki & "年" & sMonth & "月" & sDay & "日"
+            '2019/05～2019/12までは「令和元年」
+            ElseIf (dDate >= GENGO_SWITCHING) And (Year(dDate) = Year(GENGO_SWITCHING)) Then
+                sApplicationDate = GENGO_NEWGENGO & "元年" & sMonth & "月" & sDay & "日"
+            '2020/01以降は「令和〇〇年」
+            Else
+                iWareki = sYear - 2018
+                sApplicationDate = GENGO_NEWGENGO & iWareki & "年" & sMonth & "月" & sDay & "日"
+            End If
+            
+            '交通費のデータをリストに入れる
+            Dim list As New Collection
+            Dim sRoute, sKotsuhiSheetMonth As String            '交通費シートの経路と月
+            Dim vExpenses As Variant                            '交通費シートの金額
+            Dim arrRoute() As String                            '関数splRouteで経路を出発地、矢印、目的地に分けてそれぞれの要素に入れる
+        End If
+        
+        If Success Then
+            For i = KOTSUHI_START_ROW To iColumns + (KOTSUHI_START_ROW - 1)
+                sRoute = Sheets(KOTSUHI_SHEETNAME).Cells(i, kotsuhiSheet.Route)
+                sKotsuhiSheetMonth = Mid(Sheets(KOTSUHI_SHEETNAME).Cells(i, kotsuhiSheet.Day), 6, 2)
+                vExpenses = Sheets(KOTSUHI_SHEETNAME).Cells(i, kotsuhiSheet.Expenses)
+                
+                '日付の記入チェック
+                If (Val(Month(dDate)) = Int(sKotsuhiSheetMonth)) Then
+                    '経路の記入チェック
+                    If checkRoute(sRoute) Then
+                        '金額チェック
+                        If checkExpenses(vExpenses) Then
+                            '-経路を出発地、矢印(→、⇔)、目的地に分ける
+                            arrRoute = splRoute(sRoute)
+                        
+                            With New CarFare
+                                .sDay = Sheets(KOTSUHI_SHEETNAME).Cells(i, kotsuhiSheet.Day)
+                                .sPlace = Sheets(KOTSUHI_SHEETNAME).Cells(i, kotsuhiSheet.Place)
+                                .sStart = arrRoute(0)
+                                .sYajirushi = arrRoute(1)
+                                .sGoal = arrRoute(2)
+                                .sExpenses = Sheets(KOTSUHI_SHEETNAME).Cells(i, kotsuhiSheet.Expenses)
+                                list.Add .Self
+                            End With
+                        Else
+                            Success = False
+                            sErrMsg = sOpenfilename & "の一部の金額が不正です。" & vbCrLf & "処理を中断します。"
+                            
+                            Exit For
+                        End If
+                    Else
+                        Success = False
+                        sErrMsg = sOpenfilename & "の一部の経路が不正です。" & vbCrLf & "処理を中断します。"
+                        
+                        Exit For
+                    End If
+                Else
+                    Success = False
+                    sErrMsg = sOpenfilename & "の一部の日付が不正です。" & vbCrLf & "処理を中断します。"
+                End If
+            Next
+            
+            'コピーした交通費シートを削除
+            CurrentWorkbook.Sheets(KOTSUHI_SHEETNAME).Delete
+        End If
+    
+        If Success Then
+            'その他のデータの取得
+            '-社員の名前
+            Dim sEmpName As String
+    
+            sEmpName = Replace(splFileName(3), ".xls", "")  'ファイル名から拡張子を削除
+    
+            '交通費の合計
+            Dim iTotalExpenses As Long
+            iTotalExpenses = 0
+            
+            dt = 0
+            For Each dt In list
+                iTotalExpenses = iTotalExpenses + Val(dt.sExpenses)
+            Next dt
+
+        End If
+    
+        '▼明細シートの出力
+        If Success Then
+            Dim MeisaiNo As Integer     '出力先シートを設定
+                
+            '明細シートを複製
+            For MeisaiNo = 1 To iMaxMeisaiPage
+                Sheets(TEMPLATE_MEISAI_SHEETNAME).Copy After:=Worksheets(Worksheets.Count)
+                ActiveSheet.Name = MEISAI_SHEETNAME & MeisaiNo
+            Next MeisaiNo
+    
+            'データの出力
+            '-交通費一覧
+            Dim cnt As Integer         '全体のデータ件数を数える
+            Dim cntMeisai As Integer   '処理中の明細シートの件数を数える
+    
+            dt = 0
+            cnt = 0
+            cntMeisai = 0
+                
+            For Each dt In list
+                Dim sColumn As Integer      '列の開始
+                Dim x, y As Integer         'セル指定用
+                Dim viewRow As Integer      'データを出力する行
+                Dim MeisaiName As Object
+                    
+                '奇数番目のデータは左側、偶数番目のデータは右側に割り振る
+                If cnt Mod 2 = 0 Then
+                    sColumn = MEISAI_LEFT_COLUMN - 1
+                Else
+                    sColumn = MEISAI_RIGHT_COLUMN - 1
+                End If
+
+                'データを出力する明細シートを設定
+                MeisaiNo = Int(cnt / MEISAI_UPPER_LIMIT) + 1
+                Set MeisaiName = Sheets(MEISAI_SHEETNAME & MeisaiNo)
+                        
+                ''データを出力する行を設定
+                viewRow = Int(cntMeisai / 2)
+            
+                '月日
+                y = MEISAI_START_ROW + viewRow
+                x = sColumn + meisaiSheet.Day
+                Call outKotsuhiData(MeisaiName, y, x, Right(dt.sDay, 5), 3)
+                '行先
+                x = sColumn + meisaiSheet.Place
+                Call outKotsuhiData(MeisaiName, y, x, dt.sPlace, 1)
+                '出発地
+                x = sColumn + meisaiSheet.Start
+                Call outKotsuhiData(MeisaiName, y, x, dt.sStart, 2)
+                '矢印
+                x = sColumn + meisaiSheet.Yajirusi
+                Call outKotsuhiData(MeisaiName, y, x, dt.sYajirushi, 2)
+                '目的地
+                x = sColumn + meisaiSheet.Goal
+                Call outKotsuhiData(MeisaiName, y, x, dt.sGoal, 1)
+                '交通費
+                x = sColumn + meisaiSheet.Expenses
+                Call outKotsuhiData(MeisaiName, y, x, dt.sExpenses, 1)
+                    
+                '出力件数が明細シートの最大数に達していた場合は全体の件数のみカウントする
+                If cntMeisai = MEISAI_UPPER_LIMIT - 1 Then
+                    '出力中のシートが最終シートではない場合はcntMeisaiをリセットする
+                    If MeisaiNo <> iMaxMeisaiPage Then
+                        cnt = cnt + 1
+                        cntMeisai = 0
+                    '出力中のシートが最終シートの場合は後続の処理で使用するためcntMeisaiの値を保持する
+                    Else
+                        cnt = cnt + 1
+                    End If
+                '出力件数が明細シートの最大数に達していない場合はそのまま件数をカウントする
+                Else
+                    cnt = cnt + 1
+                    cntMeisai = cntMeisai + 1
+                End If
+            Next dt
+    
+            '-交通費情報の件数が奇数だった場合空のデータを出す
+            Set MeisaiName = Sheets(MEISAI_SHEETNAME & iMaxMeisaiPage)
+            viewRow = Int(cntMeisai / 2)
+            
+            If (iColumns Mod 2) <> 0 Then
+                y = MEISAI_START_ROW + viewRow
+                x = MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Day
+                Call outKotsuhiData(MeisaiName, y, x, "", 1)
+                x = MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Place
+                Call outKotsuhiData(MeisaiName, y, x, "", 1)
+                x = MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Start
+                Call outKotsuhiData(MeisaiName, y, x, "", 2)
+                x = MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Yajirusi
+                Call outKotsuhiData(MeisaiName, y, x, "", 2)
+                x = MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Goal
+                Call outKotsuhiData(MeisaiName, y, x, "", 1)
+                x = MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Expenses
+                Call outKotsuhiData(MeisaiName, y, x, "", 1)
+            End If
+            
+            '-空のデータをカウントに含める
+            cntMeisai = cntMeisai + 1
+
+    
+            '-一覧表の下部を実線にして交通費以外のデータを出力する
+            For MeisaiNo = 1 To iMaxMeisaiPage
+                '出力する明細シートを設定
+                Set MeisaiName = Sheets(MEISAI_SHEETNAME & MeisaiNo)
+                CurrentWorkbook.Sheets(MEISAI_SHEETNAME & MeisaiNo).Activate
+                    
+                '最終行を設定
+                '-最終ページ
+                If MeisaiNo = iMaxMeisaiPage Then
+                    viewRow = Int(cntMeisai / 2)
+                '最終ページ以外
+                Else
+                    viewRow = MEISAI_UPPER_LIMIT / 2
+                End If
+            
+                With MeisaiName
+                    y = MEISAI_START_ROW + viewRow
+                    .Range(Cells(y, MEISAI_LEFT_COLUMN - 1 + meisaiSheet.Day), Cells(y, MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Expenses)).Borders(xlEdgeTop).LineStyle = xlNone
+                    .Range(Cells(y, MEISAI_LEFT_COLUMN - 1 + meisaiSheet.Day), Cells(y, MEISAI_RIGHT_COLUMN - 1 + meisaiSheet.Expenses)).Borders(xlEdgeTop).LineStyle = xlContinuous
+
+                    '「金額」
+                    '-セルを結合する
+                    y = MEISAI_START_ROW + viewRow
+                    x = meisaiSheet.Total
+                    .Range(Cells(y, x), Cells(y, meisaiSheet.TotalExpenses - 1)).Merge
+                    '-結合したセルに「金額」を出力
+                    .Cells(y, x).Value = "金　額"
+                    .Cells(y, x).Font.Bold = True
+                    .Cells(y, x).HorizontalAlignment = xlCenter
+                    .Cells(y, x).Interior.Color = 65535
+                    '-1ページ目のみ合計金額を出す
+                    x = meisaiSheet.TotalExpenses
+                    If (MeisaiNo = 1) Then
+                        .Cells(y, x).Value = iTotalExpenses
+                        .Cells(y, x).NumberFormatLocal = "\#,##0_)"
+                    '-2ページ目以降は合計金額を表示しない
+                    Else
+                        .Cells(y, x).Value = "-"
+                        .Cells(y, x).HorizontalAlignment = xlRight
+                    End If
+                    '-実線で囲む
+                    y = MEISAI_START_ROW + viewRow
+                    x = meisaiSheet.Total
+                    .Range(Cells(y, x), Cells(y, meisaiSheet.TotalExpenses)).Borders.LineStyle = xlContinuous
+        
+                    'その他のデータ
+                    '-申請日
+                    .Cells(3, 3).Value = sApplicationDate
+                    '-申請者
+                    .Cells(4, 3).Value = sEmpName
+                    '-ページ数
+                    .Cells(34, 11).Value = MeisaiNo & "/" & iMaxMeisaiPage & "ページ"
+                End With
+            Next MeisaiNo
+        End If
+        
+        '▼インスタンス(交通費データ)の破棄
+        If Success Then
+            Set list = Nothing
+        End If
+        
+        '▼清書済みファイルを保存
+        If Success Then
+            '新規ファイルを作成
+            Workbooks.Add
+        
+            '新規ファイルに「明細コピー」シートをコピー
+            For MeisaiNo = 1 To iMaxMeisaiPage
+                CurrentWorkbook.Worksheets(MEISAI_SHEETNAME & MeisaiNo).Copy before:=ActiveWorkbook.Worksheets(Worksheets.Count)
+                'シート名を「明細」に変更
+                ActiveSheet.Name = SEISYO_MEISAI_SHEETNAME & MeisaiNo
+                Range("A1").Select
+            Next MeisaiNo
+        
+            '元々ある「sheet1」を削除
+            ActiveWorkbook.Sheets("sheet1").Delete
+            '明細シートをアクティブにする
+            ActiveWorkbook.Sheets(SEISYO_MEISAI_SHEETNAME & "1").Activate
+            
+            '作成したシートを名前を付けて保存
+            ActiveWorkbook.SaveAs FileName:=CurrentWorkbook.Path & "\" & SEISYO_FOLDERNAME & "\" & SEISYO_FOLDERNAME & "_" & sOpenfilename, FileFormat:=xlExcel8
+            '清書済みファイルを閉じる
+            ActiveWorkbook.Close
+            '「明細コピー」シートを削除
+            For MeisaiNo = 1 To iMaxMeisaiPage
+                CurrentWorkbook.Sheets(MEISAI_SHEETNAME & MeisaiNo).Delete
+            Next MeisaiNo
+        
+            CurrentWorkbook.Sheets("交通費清書").Activate
+        End If
+    Next
+    '■清書(繰り返し処理ここまで)■
+    
+    Sheets(TEMPLATE_MEISAI_SHEETNAME).Visible = False
+    Sheets(MAIN_KOTSUHISEISHO_SHEETNAME).Protect
+    Sheets(TEMPLATE_MEISAI_SHEETNAME).Protect
+    CurrentWorkbook.Protect PROTECTION_PASS
+    
+    Unload UserForm1
+    
+    '▼処理の完了またはエラーメッセージを表示
+    If Success Then
+        MsgBox "処理が完了しました。"
+    Else
+        MsgBox sErrMsg
+    End If
+End Sub
+
+'▼関数
+'交通費ファイルが既に開かれていないかチェック
+Function isFileOpen(FileName As String) As Boolean
+    Dim objWB As Workbook
+    
+    isFileOpen = False
+    
+    For Each objWB In Workbooks
+        If objWB.Name = FileName Then
+            isFileOpen = True
+        End If
+    Next objWB
+End Function
+
+'経路の記入チェック
+Function checkRoute(sRoute) As Boolean
+    Dim sYajirushi1, sYajirushi2, sYajirushi3 As String
+    
+    sYajirushi1 = "→"
+    sYajirushi2 = "⇒"
+    sYajirushi3 = "⇔"
+    
+    '→⇒⇔のいずれかが含まれているかチェック
+    If InStr(sRoute, sYajirushi1) <> 0 Then
+        checkRoute = True
+    ElseIf InStr(sRoute, sYajirushi2) <> 0 Then
+        checkRoute = True
+    ElseIf InStr(sRoute, sYajirushi3) <> 0 Then
+        checkRoute = True
+    Else
+        checkRoute = False
+    End If
+End Function
+
+'金額の記入チェック
+Function checkExpenses(vExpenses)
+    '金額が記入されているかチェック
+    If vExpenses <> "" Then
+        checkExpenses = True
+    Else
+        checkExpenses = False
+        Exit Function
+    End If
+    '半角チェック
+    If Len(vExpenses) = LenB(StrConv(vExpenses, vbFromUnicode)) Then
+        checkExpenses = True
+    Else
+        checkExpenses = False
+        Exit Function
+    End If
+    '数値チェック
+    If IsNumeric(vExpenses) Then
+        checkExpenses = True
+    Else
+        checkExpenses = False
+        Exit Function
+    End If
+End Function
+
+'経路を出発地、矢印、目的地に分ける
+Function splRoute(sRoute) As String()
+    Dim sYajirushi As String
+    Dim sYajirushi1, sYajirushi2, sYajirushi3 As String
+    Dim tYajirushi As Integer
+    Dim splData As Variant
+    Dim sRouteData(2) As String
+
+    sYajirushi1 = "→"
+    sYajirushi2 = "⇒"
+    sYajirushi3 = "⇔"
+    
+    '矢印の種類を調べる
+    If InStr(sRoute, sYajirushi1) <> 0 Then
+        splData = Split(sRoute, sYajirushi1)
+        sYajirushi = sYajirushi1
+    ElseIf InStr(sRoute, sYajirushi2) <> 0 Then
+        splData = Split(sRoute, sYajirushi2)
+        sYajirushi = sYajirushi1            '⇒は→に変換する
+    ElseIf InStr(sRoute, sYajirushi3) <> 0 Then
+        splData = Split(sRoute, sYajirushi3)
+        sYajirushi = sYajirushi3
+    End If
+    
+    'それぞれの要素に出発地、矢印、目的地を入れる
+    '複数の経路が入力されていた場合は一番最初の場所と最後の場所のみ取得する
+    '例：「Ａ駅→Ｂ駅→Ｃ駅→Ｄ駅」の場合、Ａ駅とＤ駅を取得する
+    sRouteData(0) = splData(0)
+    sRouteData(1) = sYajirushi
+    sRouteData(2) = splData(UBound(splData))
+    
+    splRoute = sRouteData
+End Function
+
+'交通費データを出力
+Sub outKotsuhiData(sSheetName, y, x, data, RuleType)
+    With sSheetName
+        Select Case RuleType
+            '罫線下が点線、右が実線(対象:訪問先、目的地、金額)
+            Case "1"
+                .Cells(y, x).Value = data
+                .Cells(y, x).Borders(xlEdgeBottom).Weight = xlHairline
+                .Cells(y, x).Borders(xlEdgeRight).LineStyle = xlContinuous
+            '罫線下が点線、右が点線(対象:出発地、矢印)
+            Case "2"
+                .Cells(y, x).Value = data
+                .Cells(y, x).Borders(xlEdgeBottom).Weight = xlHairline
+                .Cells(y, x).Borders(xlEdgeRight).Weight = xlHairline
+            '罫線下が点線、右と左が実線(対象:月日)
+            Case "3"
+                .Cells(y, x).Value = data
+                .Cells(y, x).Borders(xlEdgeBottom).Weight = xlHairline
+                .Cells(y, x).Borders(xlEdgeRight).LineStyle = xlContinuous
+                .Cells(y, x).Borders(xlEdgeLeft).LineStyle = xlContinuous
+        End Select
+    End With
+End Sub

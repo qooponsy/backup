@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+このファイルは、Web プロジェクトの発行/パッケージ処理で使用されます。この MSBuild ファイルを編集することによって、
+この処理の動作をカスタマイズできます。詳細については、http://go.microsoft.com/fwlink/?LinkID=208121 を参照してください。
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>\\SRVFILE2\staff\社内システムWG\交通費清書システム\deploy\Release\CarfareWeb</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/CarfareWeb.dll">
+      <publishTime>12/22/2017 13:23:07</publishTime>
+    </File>
+    <File Include="bin/CarfareWeb.xml">
+      <publishTime>12/22/2017 13:23:07</publishTime>
+    </File>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>06/15/2015 02:06:24</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>06/18/2015 20:19:44</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>11/16/2017 18:09:41</publishTime>
+    </File>
+    <File Include="index.html">
+      <publishTime>12/15/2017 09:48:46</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>11/16/2017 18:09:41</publishTime>
+    </File>
+    <File Include="success_carfare.aspx">
+      <publishTime>11/16/2017 18:09:41</publishTime>
+    </File>
+    <File Include="Test.aspx">
+      <publishTime>12/14/2017 11:08:42</publishTime>
+    </File>
+    <File Include="test_api.aspx">
+      <publishTime>11/16/2017 18:09:41</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>12/22/2017 13:23:13</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

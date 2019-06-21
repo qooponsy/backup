@@ -1,0 +1,49 @@
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\Interop.Microsoft.Office.Interop.Word.dll
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりAllStar_台本変換.vbproj.ResolveComReference.cache
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\bin\Release\うたぷりMusic2_台本変換.exe
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\bin\Release\うたぷりMusic2_台本変換.pdb
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\bin\Release\うたぷりMusic2_台本変換.xml
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frm章ﾏｽﾀﾒﾝﾃﾅﾝｽ_変更.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frm章ﾏｽﾀﾒﾝﾃﾅﾝｽ_追加.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frm章ﾏｽﾀﾒﾝﾃﾅﾝｽ.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmｷｬﾗｸﾀﾏｽﾀ_変更.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmｷｬﾗｸﾀﾏｽﾀ_追加.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmｷｬﾗｸﾀﾏｽﾀ.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmMain.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmﾙｰﾄﾏｽﾀﾒﾝﾃﾅﾝｽ.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmﾙｰﾄﾏｽﾀﾒﾝﾃﾅﾝｽ_変更.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmﾙｰﾄﾏｽﾀﾒﾝﾃﾅﾝｽ_追加.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.Resources.resources
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.exe
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.xml
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.pdb
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\Interop.Microsoft.Office.Core.dll
+C:\VB2010Project\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりAllStar_台本変換.vbproj.GenerateResource.Cache
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\Interop.Microsoft.Office.Interop.Word.dll
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\Interop.Microsoft.Office.Core.dll
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりAllStar_台本変換.vbproj.ResolveComReference.cache
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.exe
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.xml
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.pdb
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\bin\Release\うたぷりMusic2_台本変換.exe
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\bin\Release\うたぷりMusic2_台本変換.pdb
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\bin\Release\うたぷりMusic2_台本変換.xml
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりAllStar_台本変換.vbprojResolveAssemblyReference.cache
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frm章ﾏｽﾀﾒﾝﾃﾅﾝｽ_変更.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frm章ﾏｽﾀﾒﾝﾃﾅﾝｽ_追加.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frm章ﾏｽﾀﾒﾝﾃﾅﾝｽ.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmｷｬﾗｸﾀﾏｽﾀ_変更.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmｷｬﾗｸﾀﾏｽﾀ_追加.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmｷｬﾗｸﾀﾏｽﾀ.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmMain.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmﾙｰﾄﾏｽﾀﾒﾝﾃﾅﾝｽ.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmﾙｰﾄﾏｽﾀﾒﾝﾃﾅﾝｽ_変更.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.frmﾙｰﾄﾏｽﾀﾒﾝﾃﾅﾝｽ_追加.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.Resources.resources
+C:\Users\Broc0238\Documents\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりAllStar_台本変換.vbproj.GenerateResource.Cache
+C:\DATA\50 Source\soar_its_project\ブロッコリー\06.台本作成システム開発\30.提供資料\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\Interop.Microsoft.Office.Interop.Word.dll
+C:\DATA\50 Source\soar_its_project\ブロッコリー\06.台本作成システム開発\30.提供資料\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\Interop.Microsoft.Office.Core.dll
+C:\DATA\50 Source\soar_its_project\ブロッコリー\06.台本作成システム開発\30.提供資料\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりAllStar_台本変換.vbproj.ResolveComReference.cache
+C:\DATA\50 Source\soar_its_project\ブロッコリー\06.台本作成システム開発\30.提供資料\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.exe
+C:\DATA\50 Source\soar_its_project\ブロッコリー\06.台本作成システム開発\30.提供資料\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.xml
+C:\DATA\50 Source\soar_its_project\ブロッコリー\06.台本作成システム開発\30.提供資料\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\うたぷりAllStar_台本変換\obj\x86\Release\うたぷりMusic2_台本変換.pdb

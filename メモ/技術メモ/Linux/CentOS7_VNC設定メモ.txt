@@ -1,0 +1,39 @@
+CentOS7_VNC設定メモ
+
+	tigervnc-server をインストール
+		yum install tigervnc-server
+
+	VNCサーバのパスワード設定
+		vncpasswd
+
+	VNCサーバのサービス設定
+		cd /etc/systemd/system
+		cp /usr/lib/systemd/system/vncserver@.servie vncserver@:0.service
+
+			※コピー先ファイルに追加する数値がディスプレイナンバーとなる
+			※TCPポートは0～3番まで公開されておりポートは5900にディスプレイ番号を足したもの
+			※3番のディスプレイ番号を利用する場合はTCP5904番ポートを使って通信する
+			
+
+	ユニットファイルを編集
+		vi /etc/systemd/system/vncserver@:0.service
+
+			※ファイル内で<USER>となっている箇所を使用ユーザーに書き換える
+
+	サービス有効化
+		systemctl daemon-reload
+		systemctl enable vncserver@:1
+		systemctl restart vncserver@:1
+
+	ファイアーウォール設定
+		firewall-cmd --permanent --zone=public --add-service=vnc-server
+		firewall-cmd --reload
+
+	VNCサーバーを起動
+		vncserver :0
+
+			※数値はディスプレイナンバーを入力
+			※停止の場合は下記を実行
+				vncserver -kill :0
+
+	接続確認

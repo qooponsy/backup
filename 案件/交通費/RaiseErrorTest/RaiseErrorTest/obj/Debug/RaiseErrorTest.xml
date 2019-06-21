@@ -1,0 +1,64 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+RaiseErrorTest
+</name>
+</assembly>
+<members>
+<member name="T:RaiseErrorTest.My.Resources.Resources">
+<summary>
+  ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
+</summary>
+</member>
+<member name="P:RaiseErrorTest.My.Resources.Resources.ResourceManager">
+<summary>
+  このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
+</summary>
+</member>
+<member name="P:RaiseErrorTest.My.Resources.Resources.Culture">
+<summary>
+  厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+  現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
+</summary>
+</member>
+<member name="P:RaiseErrorTest.My.Resources.Resources.script">
+<summary>
+  
+declare @WorkerID char(4)
+declare  @Year char(4)
+declare @Month char(2)
+declare @Status char(1)
+declare @WriteStatus char(1)
+declare @SessionKey char(32)
+
+
+set @WorkerID = &apos;0013&apos;
+set @Year = &apos;2017&apos;
+set @Month = &apos;12&apos;
+set @Status = &apos;0&apos;
+set @WriteStatus = &apos;0&apos;
+
+set @SessionKey = &apos;22345678901234567890123456789012&apos;
+--set @SessionKey = null
+
+
+--test
+
+
+declare @seq int
+
+BEGIN TRY
+BEGIN tran
+
+INSERT INTO [T_Carfare] VALUES(
+SYSDATETIME()
+, &apos;9999&apos;
+, SYSDATETIME()
+, &apos;9999&apos;
+, @WorkerID
+ [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+</summary>
+</member>
+</members>
+</doc>

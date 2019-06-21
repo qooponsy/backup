@@ -1,0 +1,39 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="DB" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Server=tcp:192.168.53.204;Database=CarfareTest;UID=Carfare;PWD=Carfare;Connection Timeout=5</Value>
+    </Setting>
+    <Setting Name="SmtpID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">fatei.carfare@gmail.com</Value>
+    </Setting>
+    <Setting Name="SmtpHost" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">smtp.gmail.com</Value>
+    </Setting>
+    <Setting Name="SmtpPort" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="SmtpTimeout" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">10000</Value>
+    </Setting>
+    <Setting Name="SmtpPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">fHQtVgFPpldSgxK</Value>
+    </Setting>
+    <Setting Name="SmtpSSL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AdminAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">fi_koutsu@fate-i.jp</Value>
+    </Setting>
+    <Setting Name="WebName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CarfareWebTest</Value>
+    </Setting>
+    <Setting Name="WebIPAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">carfare.fate-i.lo</Value>
+    </Setting>
+    <Setting Name="TestMode" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

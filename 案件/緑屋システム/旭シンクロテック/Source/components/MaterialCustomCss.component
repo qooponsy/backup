@@ -1,0 +1,167 @@
+<apex:component >
+    <style type="text/css">
+        div.container{
+            max-width: 800px;
+        }
+
+        .btn-primary-color{
+            color: #fff;
+            background-color: #337ab7;
+            border-color: #2e6da4;
+        }
+
+        div.header_outer
+			{
+				width:100%;
+			}
+
+            div.header_left_outer
+			{
+				display:inline-block;
+				width:75%;
+				float:left;
+			}
+			/* @media (min-width: 630px) */
+			@media (min-width: 720px)
+				{
+                    /* pc用 */
+					div.header_left_outer
+						{
+							width:auto;
+						}
+				}
+
+            div.header_right_outer
+			    {
+				    display:inline-block;
+				    width:16%;
+				    float:right;
+				    position:relative;
+				    /* margin-right:10px; */
+                    margin-right:10px;
+			    }
+    			@media (min-width: 720px)
+    				{
+                        /* pc用 */
+    					div.header_right_outer
+    						{
+            				    margin-right:0px;
+                                width:25%;
+    						}
+    				}
+
+            div.header_right_outer > div.btn
+                {
+                    position:relative;
+                    /* position:relative; */
+                    top:50%;
+                    right:50%;
+                    /* margin-top:20px; */
+                    /* margin-right:20%; */
+                }
+    			@media (min-width: 720px)
+    				{
+                        /* pc用 */
+    					div.header_right_outer > div.btn
+    						{
+                                position:absolute;
+    							margin-top:0;
+                                right:30%;
+    						}
+    				}
+            div.header_right_outer > div#list
+                {
+                    margin-top:5px;
+                }
+    			@media (min-width: 630px)
+    				{
+                        /* pc用 */
+    					div.header_right_outer > div#list
+    						{
+    							margin-top:0;
+                                margin-left:10px;
+    						}
+    				}
+            div.header_right_outer > div#menu
+                {
+                    
+                }
+    			@media (min-width: 630px)
+    				{
+                        /* pc用 */
+    					div.header_right_outer > div#menu
+    						{
+                                margin-right:50%;
+    						}
+    				}
+
+            div.header_left_colmun_01, div.header_left_colmun_02
+			    {
+				    display:inline-block;
+				    width:auto;
+				    float:left;
+				    padding:5px;
+				    text-align:left;
+			    }
+
+
+        /*全体用*/
+        /*div.mainbox{
+            font-size:20px;
+            margin-top:15px;
+        }
+        div.btn{
+            border-radius:10px;
+        }*/
+        /*タブレット用*/
+        /*@media all and (min-width: 768px){
+            div.mainbox{
+
+            }
+        }*/
+        /*PC用*/
+        /*@media (min-width: 920px){
+            div.mainbox{
+            font-size:20px;
+            margin-top:20px;
+            }
+        }*/
+
+            //menu_buttom_new
+            div.menu_buttom_new
+                {
+                    
+                }
+
+            div.btn-parent
+                {
+                    height:35px;
+                }
+            @media all and (max-width: 768px){
+                div.btn-parent
+                    {
+                        height:100px;
+                    }
+                }
+
+
+
+            div.inner_buttom
+                {
+                    width:14.1%;
+                    padding:0px;
+                    border-style:none;
+                    float:left;
+
+                }
+                @media all and (max-width: 768px){
+                    div.inner_buttom
+                        {
+                            width:33.1%;
+                        }
+                    }
+
+
+
+    </style>
+</apex:component>

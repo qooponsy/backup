@@ -1,0 +1,49 @@
+:/	--------------------------------------------------------
+:/	cmd.exeは、管理者権限で実行すべき。
+:/	--------------------------------------------------------
+
+:/	2014/08/18  16:26    <DIR>          boot
+:/	2013/05/10  20:52    <DIR>          Intel
+:/	2009/07/14  12:20    <DIR>          PerfLogs
+:/	2014/12/25  14:54    <DIR>          Program Files
+:/	2016/07/28  07:17    <DIR>          Program Files (x86)
+:/	2013/09/17  12:41    <DIR>          Software
+:/	2013/05/10  20:56    <DIR>          Temp
+:/	2013/09/17  17:34    <DIR>          Users
+:/	2016/09/08  14:35    <DIR>          Windows
+:/	2014/12/25  18:37    <DIR>          _saito
+
+:/	--------------------------------------------------------
+:/	robocopy options
+:/	/XF ファイル [ファイル]... :: 指定された名前/パス/ワイルドカードに一致するファイルを除外します。
+:/	/XD ディレクトリ [ディレクトリ]... :: 指定された名前/パスに一致するディレクトリを除外します。
+:/	/MIR :: ディレクトリ ツリーをミラー化します (/E および /PURGE と同等)
+:/		     /E :: 空のディレクトリを含むサブディレクトリをコピーします。
+:/		 /PURGE :: 既にコピー元に存在しないコピー先のファイル/ディレクトリ
+:/		          を削除します。
+:/	/XJ :: 接合ポイントを除外します (通常、既定で含まれます)。	ジャンクションの除外
+:/	/FFT :: FAT ファイル時間 (2 秒の粒度) を仮定します。		2秒以内の誤差を許容
+:/	/R:n :: 失敗したコピーに対する再試行数: 既定値は 1,000,000。
+:/	/TEE :: コンソール ウィンドウとログ ファイルに出力します。
+:/	/LOG:ファイル :: ログ ファイルに状態を出力します (既存のログを上書きします)。
+:/	/LOG+:ファイル :: ログ ファイルに状態を出力します (既存のログ ファイルに追加します)。
+:/	--------------------------------------------------------
+
+	set TODAY=180507
+	
+	set OPTIONS=/MIR /XJ /FFT /TEE /R:1 /LOG+:robocopy_%TODAY%.log
+	set DST=\\192.168.0.14\personal\saito\_saito\_Backup\__FATE010
+
+:/	robocopy "c:\_saito" "%DST%\_saito" %OPTIONS%
+:/	-- VM除外版 ★要チェック：サーバー側が600GBからいくつまで減るか。
+	robocopy "c:\_saito" "%DST%\_saito" %OPTIONS% /XD "\My Virtual Machines\"
+
+:/	robocopy "c:\Users" "%DST%\Users" %OPTIONS%
+:/	robocopy "c:\Intel" "%DST%\Intel" %OPTIONS%
+:/	robocopy "c:\PerfLogs" "%DST%\PerfLogs" %OPTIONS%
+:/	robocopy "c:\Program Files" "%DST%\Program Files" %OPTIONS%
+:/	robocopy "c:\Program Files (x86)" "%DST%\Program Files (x86)" %OPTIONS% /XD "\Symantec Endpoint Protection\"
+:/	robocopy "c:\Software" "%DST%\Software" %OPTIONS%
+:/	robocopy "c:\Temp" "%DST%\Temp" %OPTIONS%
+:/	robocopy "c:\Windows" "%DST%\Windows" %OPTIONS% /XD "\ServiceProfiles\" "\System32\config\" "\System32\LogFiles\"
+:/	robocopy "c:\boot" "%DST%\boot" %OPTIONS%

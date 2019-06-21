@@ -1,0 +1,181 @@
+<apex:page title="資材選択④" controller="MaterialController" action="{!checkRedirect}" standardStylesheets="false" showHeader="false">
+<head>
+    <c:MaterialHtmlHead />
+</head>
+<body>
+    <!--ヘッダ-->
+    <c:MaterialHeader />
+    <apex:form id="form">
+    <apex:actionFunction name="transition1" action="{!transition1}"/><!--資材選択1へ-->
+    <apex:actionFunction name="transition3" action="{!transition3}"/><!--資材選択3へ-->
+    <apex:actionFunction name="transition4" action="{!transition4}"/><!--資材選択4へ-->
+    <apex:actionFunction name="transitionList1" action="{!transitionList1}"/><!--資材一覧1へ_old?-->
+    <apex:actionFunction name="transitionToList1" action="{!transitionToList1}"/><!--資材一覧1へ-->
+    <apex:inputText value="{!ConstructionNumber}" style="display:none" /><!--工事番号-->
+    <apex:inputText value="{!Procurementnumber}" style="display:none" /><!--調達番号-->
+    <apex:inputText value="{!division}" style="display:none" /><!--区分-->
+
+    <apex:inputText value="{!classification}" style="display:none" /><!--分類-->
+    <apex:inputText value="{!material}" style="display:none" /><!--材質-->
+    <apex:inputText value="{!item}" style="display:none" /><!--品名-->
+    <apex:inputText value="{!standard1}" style="display:none" /><!--規格1-->
+    <apex:inputText value="{!standard2}" style="display:none" /><!--規格2-->
+
+    <apex:inputText value="{!ConstructionName}" styleClass="" style="display:none"/><!--工事名-->
+    <apex:inputText value="{!ConstructionRecordTypeId}" styleClass="" style="display:none"/><!--工事番号レコードタイプ-->
+
+    <apex:inputText id="minimumOrdering" value="{!Selection4Size[0].MinimumOrdering__c}" style="display:none" /><!--最低発注数-->
+    <div class="container" style="list-style:none">
+        <li>
+            <label style="font-weight:400;margin-right:10px;width:80px">資材名</label>
+            <label>{!Selection4Label}</label>
+        </li>
+        <li>
+            <label style="font-weight:400;margin-right:10px;width:80px">サイズ</label>
+            <apex:selectList id="size" value="{!size}" size="1"><!--選択したvalueを格納する変数-->
+                <apex:selectOptions value="{!Selection4SizeList}" /><!--選択肢を格納したList<SelectOption>-->
+            </apex:selectList>
+        </li>
+        <li>
+            <label style="font-weight:400;margin-right:10px;width:80px">数量</label>
+            <apex:inputText id="quantity" value="{!volume}" styleClass="num" style="width:50px" />
+            　　単位　<u>　{!Selection4Size[0].Unit__c}　</u>
+        </li>
+        <li>
+            <label style="font-weight:400;margin-right:10px;width:80px;vertical-align:top">資材備考</label>
+            <apex:inputTextarea id="ProcurementRequestRemarks" value="{!note}" rows="3" cols="40" />
+        </li>
+    </div>
+    <div class="container" style="margin-top:10px">
+        <apex:commandLink value="戻る" action="{!transition4Back}" style="" styleClass="btn btn-primary">
+            <apex:param name="classification" value="{!classification}" /><!--分類-->
+            <apex:param name="material" value="{!material}" /><!--材質-->
+            <apex:param name="item" value="{!item}" /><!--品名-->
+            <apex:param name="standard1" value="{!standard1}" /><!--規格1-->
+            <apex:param name="standard2" value="{!standard2}" /><!--規格2-->
+        </apex:commandLink>
+        <div onclick="return RegistInputData('登録')" class="btn btn-primary" style="float:right;margin-left:5px">登録</div>
+        <apex:outputPanel rendered="{!PRId==''||PRId==null}" layout="none">
+            <div onclick="return RegistInputData('続けて登録')" class="btn btn-primary" style="float:right;background-color: #11b0e5">続けて登録</div>
+        </apex:outputPanel>
+        <!-- <div onclick="return RegistInputData('続けて登録')" class="btn btn-primary" style="float:right;background-color: #11b0e5" data-toggle="modal" data-target="#confirm">続けて登録</div> -->
+    </div>
+    <!--モーダル/確認-->
+    <div class="modal fade" id="confirm" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body" style="text-align:center">
+                    登録が完了しました<br/>
+                    <div id="ok" class="btn btn-primary">OK</div>
+                </div>
+            </div>
+        </div>
+    </div><!--モーダル/確認　ここまで-->
+
+</apex:form>
+</body>
+<script>
+$(document).ready(function () {
+    //ページ遷移用関数
+    $('#entry').click(function(){
+        transitionList1(); //資材一覧1へ
+    });
+    $('#ok').click(function(){
+        transition4(); //同じページへ
+    });
+    //入力監視関数
+    $('input.num').on('input', function(){
+        //半角変換(変換後の文字をinputに出力)
+        var halfVal = $(this).val().replace(/[！-～]/g,
+            function(tmpStr){
+                //文字コードをシフト
+                return String.fromCharCode(tmpStr.charCodeAt(0) - 0xFEE0);
+            }
+        );
+        //数字以外の不要な文字を削除(変換関数の結果出力された文字に対して判定)
+        $(this).val(halfVal.replace(/[^0-9]/g, ''));
+    })
+});
+
+//バリデーション
+//資材選択4画面
+function RegistInputData(regType) {
+    changeLoading(true);
+    var id;
+
+    // サイズ取得
+    id = '{!$Component.form.size}'; //VFページでのセレクタ取得
+    id = id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+    var size = $('#'+ id).val();
+
+    // 数量取得
+    id = '{!$Component.form.quantity}'; //VFページでのセレクタ取得
+    id = id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+    var quantity = $('#'+ id).val();
+
+    // 備考取得
+    id = '{!$Component.form.ProcurementRequestRemarks}'; //VFページでのセレクタ取得
+    id = id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+    var procurementRequestRemarks = $('#'+ id).val();
+
+    // 最低発注数取得
+    id = '{!$Component.form.minimumOrdering}'; //VFページでのセレクタ取得
+    id = id.replace(/:/g,'\\:'); //コロンを含むidのためエスケープ
+    var minimumOrdering = $('#'+ id).val();
+
+    {!$RemoteAction.MaterialController.CheckSelection4}(
+        quantity,  procurementRequestRemarks, minimumOrdering,  // 渡すパラメータ 
+        function(result, event){    // コールバック関数
+            if(event.status) {
+                if (result == ""){
+                    // 登録処理
+                    var prm = {};
+                    prm['ConstructionNumber'] = "{!ConstructionNumber}";
+                    prm['division'] = "{!division}";
+                    prm['classification'] = "{!classification}";
+                    prm['material'] = "{!material}";
+                    prm['item'] = "{!item}";
+                    prm['standard1'] = "{!standard1}";
+                    prm['standard2'] = "{!standard2}";
+                    prm['size'] = size;
+                    prm['quantity'] = quantity;
+                    prm['quantityUnit'] = "{!Selection4Size[0].Unit__c}";
+                    prm['procurementRequestRemarks'] = procurementRequestRemarks;
+                    if("{!PRId}" != ""){
+                        prm['PRId'] = "{!PRId}"; //調達依頼のID
+                    }
+                    
+                    {!$RemoteAction.MaterialController.RegistProcurementRequest}(
+                        prm,  // 渡すパラメータ 
+                        function(result, event){    // コールバック関数
+                            if(event.status) {
+                                if (regType == "登録") {
+                                    // [登録]ボタン処理
+                                    //transitionList1(); //資材一覧1へ
+                                    transitionToList1();
+                                } else if((regType == "続けて登録")) {
+                                    // [続けて登録]ボタン処理alert('登録が完了しました。');
+                                    customAlert('登録が完了しました。'); //モバイル端末の場合表示を分ける？
+                                    transition4(); //同じページへ
+                                }
+                            }else{
+                                customAlert("【エラー】\n登録処理に失敗しました。");
+                                changeLoading(false);
+                            }
+                        });
+                }else{
+                    customAlert(result);
+                    changeLoading(false);
+                }
+            }
+            else{
+                customAlert("システムエラー");
+                changeLoading(false);
+            }
+        });
+
+        return false;
+
+}
+</script>
+</apex:page>

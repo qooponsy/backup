@@ -1,0 +1,128 @@
+
+■NginX導入手順
+
+	Nginxのパッケージ追加
+		sudo rpm -ivh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+
+	パッケージの更新
+		sudo yum -y update nginx-release-centos
+
+	Nginxのインストール
+		sudo yum -y --enablerepo=nginx install nginx
+
+	自動起動設定
+		sudo systemctl enable nginx
+
+	バージョン確認
+		nginx -v
+
+	Nginxの設定ファイル編集
+		vi /etc/nginx/nginx.conf
+
+			User nginx;
+				↓
+			User root
+
+	Nginxの起動
+		systemctl start nginx.service
+
+	ポート80をあける
+		firewall-cmd --permanent --zone=public --add-service=http 
+		firewall-cmd --reload
+		firewall-cmd --list-all
+
+
+
+■リバースプロキシ設定
+
+	設定を変更
+		vi /etc/nginx/nginx.conf
+
+-------------------------
+
+    server {
+        server_name  192.168.53.156;
+
+        location / {
+              proxy_pass http://192.168.53.154/;
+         }
+    }
+
+-------------------------
+
+	設定を反映
+		systemctl restart nginx.service
+
+	
+■ロードバランシング設定
+
+	設定を変更
+		vi /etc/nginx/nginx.conf
+
+-------------------------
+
+    upstream dev.penguinuk.com {
+         server 192.168.53.154;
+         server 192.168.53.155;
+    }
+
+    server {
+        server_name  192.168.53.156;
+        real_ip_header X-Forwarded-For;
+
+        location / {
+              proxy_pass http://dev.penguinuk.com/;
+         }
+    }
+
+-------------------------
+
+■X-Forwarded-Forの設定
+
+	設定を変更
+		vi /etc/nginx/nginx.conf
+
+-------------------------
+
+server {
+        server_name  192.168.53.156;
+
+        location / {
+              proxy_pass http://dev.penguinuk.com/;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;	☆追加
+         }
+    }
+
+-------------------------
+
+■アクセスログの設定
+	WebサーバーのIISを開く
+		[ログ記録]-[フィールドの選択]-[フィールドの追加]
+			X-Forwarded-For
+			要求ヘッダー
+			X-Forwarded-For
+
+	サイトを更新
+		[サイト]-[Penguin8]-[webサイトの管理]
+			再起動を実行
+
+	アクセスログのヘッダーを確認	
+
+
+
+■Nginx操作
+
+	起動
+		nginx
+	停止
+		nginx -s stop
+	再起動
+		nginx -s reload
+	設定ファイルのチェック
+		nginx -t
+
+
+■参考サイト
+
+	CentOS7.1でnginxを用いたウェブサーバの構築
+	https://qiita.com/ksugawara61/items/0fcf3f72cc905bb6d654

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+SessionKeyCreateTest
+</name>
+</assembly>
+<members>
+<member name="M:SessionKeyCreateTest.clsSessionKey.CreateSession(System.String)">
+ <summary>
+ ハッシュ値を32文字で生成
+ base = (ユーザーフォルダ名)_yyyyMM
+ </summary>
+ <param name="base">SHA256ハッシュ値の変換値</param>
+ <returns></returns>
+</member>
+<member name="M:SessionKeyCreateTest.clsSessionKey.ConvSHA256(System.String)">
+ <summary>
+ SHA256ハッシュでセッションキー作成
+ </summary>
+ <param name="base">ハッシュ元の文字列</param>
+ <returns>SHA256ハッシュ値の変換値</returns>
+</member>
+<member name="T:SessionKeyCreateTest.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:SessionKeyCreateTest.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:SessionKeyCreateTest.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+</members>
+</doc>
