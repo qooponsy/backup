@@ -1,0 +1,10 @@
+ブロッコリー向け開発環境情報
+
+	MySQL
+		
+		User：Root
+		Pass：fate-i0123
+
+		User：broccoli
+		Pass：broccoli
+
